@@ -1,0 +1,40 @@
+{% extends "package/edit_base.html" %}
+
+{% block subtitle %}{{ _('Choose action') }} - {{ h.dataset_display_name(pkg) }}{% endblock %}
+
+{% block page_primary_action %}{% endblock %}
+
+{% block primary_content %}
+  <section class="module">
+    {% block page_header %}{% endblock %}
+    <div class="module-content">
+      {% block primary_content_inner %}
+        {% snippet 'pipeline/snippets/stages.html', stages=['active', 'uncomplete'] %}
+        <form method='post' class="module-content form-horizontal" action="{% url_for controller='ckanext.controllers.pipeline:ICController', action='choose_action', id=c.pkg_dict.name %}">
+          <label for="radio1" class="radio">
+            <input id="radio1" name="action" value="existing" type="radio" class="radio" checked="checked" />
+            Existing pipeline
+          </label>
+          <div class="form-actions">
+			<input type="submit" class="btn btn-primary" value="Next step" />
+		  </div>
+        </form>
+      {% endblock %}
+    </div>
+  </section>
+{% endblock %}
+
+{% block secondary_content %}
+  {% block info_module %}
+    <section class="module module-narrow module-shallow">
+      <h2 class="module-heading"><i class="icon-info-sign"></i> {{ _('Advice') }}</h2>
+      <div class="module-content">
+        <p>
+          {% trans %}
+          text
+          {% endtrans %}
+        </p>
+      </div>
+    </section>
+  {% endblock %}
+{% endblock %}
