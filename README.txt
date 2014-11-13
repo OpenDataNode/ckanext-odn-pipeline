@@ -15,8 +15,6 @@ TODO
 Installation
 ============
 
-pip install -e git+https://github.com/OpenDataNode/InternalCatalog.git
-
 (Optional): activate ckan virtualenv
 
 Requires installation of:
