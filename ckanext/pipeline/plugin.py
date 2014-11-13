@@ -13,7 +13,7 @@ import ckan.lib.helpers as h
 
 
 # from ckan.common import OrderedDict, _, json, request, c, g, response
-from ckanext.internal_catalog.uv_helper import UVRestAPIWrapper
+from ckanext.pipeline.uv_helper import UVRestAPIWrapper
 from ckanext.model.pipelines import Pipelines
 import urllib2
 
@@ -108,7 +108,7 @@ def get_pipes_options():
     return options, descriptions
 
 
-class InternalCatalog(plugins.SingletonPlugin):
+class PipelinePlugin(plugins.SingletonPlugin):
     
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.ITemplateHelpers)

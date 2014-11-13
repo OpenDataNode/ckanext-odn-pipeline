@@ -11,7 +11,7 @@ import logging
 from ckanext.model.pipelines import pipelines_table
 log = logging.getLogger('ckanext')
 
-class InternalCatalogCmd(CkanCommand):
+class PipelineCmd(CkanCommand):
     """Database initialization command
     
     Usage:
@@ -26,7 +26,7 @@ class InternalCatalogCmd(CkanCommand):
     min_args = 0
     
     def __init__(self, name):
-        super(InternalCatalogCmd, self).__init__(name)
+        super(PipelineCmd, self).__init__(name)
         
     
     def command(self):

@@ -12,7 +12,7 @@ import ckan.model as model
 
 from ckan.common import _, request, c
 from ckanext.model.pipelines import Pipelines
-from ckanext.internal_catalog.plugin import get_pipeline
+from ckanext.pipeline.plugin import get_pipeline
 
 NotFound = logic.NotFound
 NotAuthorized = logic.NotAuthorized

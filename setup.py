@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 version = '0.1.0-SNAPSHOT'
 
 setup(
-    name='ckanext-internal-catalog',
+    name='ckanext-odn-pipeline',
     version=version,
     description="""
     Adding dataset_purge api action for sysadmins only
@@ -18,7 +18,7 @@ setup(
     uv_url='',
     license='',
     packages=find_packages(exclude=['examples', 'tests']),
-    namespace_packages=['ckanext', 'ckanext.internal_catalog', 'ckanext.model',\
+    namespace_packages=['ckanext', 'ckanext.pipeline', 'ckanext.model',\
                         'ckanext.commands', 'ckanext.controllers'],
     package_data={'': [
                        'fanstatic/*.css',\
@@ -33,8 +33,8 @@ setup(
     entry_points=\
     """
     [ckan.plugins]
-    internal-catalog=ckanext.internal_catalog.plugin:InternalCatalog
+    pipeline=ckanext.pipeline.plugin:PipelinePlugin
     [paste.paster_command]
-    internal-catalog-cmd = ckanext.commands.internal_catalog_cmd:InternalCatalogCmd
+    pipeline-cmd = ckanext.commands.pipeline_cmd:PipelineCmd
     """,
 )

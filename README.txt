@@ -1,10 +1,16 @@
 About
 =====
-CKAN extension implementing ODN Internal catalog funkcionality 
+CKAN extension implementing ODN pipeline association to dataset functionality 
 
 Until now added features:
+* Adds 'pipelines' table to DB, columns: package_id, pipeline_id, name
 * Adds tab 'Pipelines' to dataset management
-* Uses ODN/UV rest api
+* Associates pipline with CKAN dataset
+* Uses ODN/UV rest API
+
+TODO
+====
+* remove state column from table
 
 Installation
 ============
@@ -15,15 +21,15 @@ pip install -e git+https://github.com/OpenDataNode/InternalCatalog.git
 
 Requires installation of:
 * ckancommons:
-cd InternalCatalog/ckancommons
+cd ckanext-odn-ic/ckancommons
 python setup.py install
 
-* internal catalog extenstion:
-cd InternalCatalog/ckanext-internal-catalog
+* pipeline extenstion:
+cd ckanext-odn-ic/ckanext-odn-pipeline
 python setup.py install
 
 Add extension to ckan config: /etc/ckan/default/production.ini
-ckan.plugins = internalcatalog
+ckan.plugins = pipeline
 
 to [app:main] add:
 internal.catalog.uv.url = http://url_to_uv.com:8080
@@ -31,7 +37,7 @@ internal.catalog.uv.url = http://url_to_uv.com:8080
 DB init
 =======
 After installing plugin and restarting apache server start db initialization:
-paster --plugin=ckanext-internal-catalog internal-catalog-cmd initdb --config=/etc/ckan/default/production.ini
+paster --plugin=ckanext-odn-pipeline pipeline-cmd initdb --config=/etc/ckan/default/production.ini
 
 There should be output like this:
 Starting db initialization
@@ -42,7 +48,7 @@ End of db initialization
 Uninstall
 =========
 Before removing extension start:
-paster --plugin=ckanext-internal-catalog internal-catalog-cmd uninstall --config=/etc/ckan/default/production.ini
+paster --plugin=ckanext-odn-pipeline pipeline-cmd uninstall --config=/etc/ckan/default/production.ini
 
 This will drop tables created in DB init script.
 Now you can remove plugin string from: /etc/ckan/default/production.ini
