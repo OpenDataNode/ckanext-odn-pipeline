@@ -10,7 +10,7 @@
     <div class="module-content">
       {% block primary_content_inner %}
         {% snippet 'pipeline/snippets/stages.html', stages=['active', 'uncomplete'] %}
-        <form method='post' class="module-content form-horizontal" action="{% url_for controller='ckanext.controllers.pipeline:ICController', action='choose_action', id=c.pkg_dict.name %}">
+        <form method='post' class="module-content form-horizontal" action="{% url_for controller='ckanext.controllers.pipeline:ICController', action='choose_pipeline', id=c.pkg_dict.name %}">
           <label for="radio1" class="radio">
             <input id="radio1" name="action" value="existing" type="radio" class="radio" checked="checked" />
             Existing pipeline

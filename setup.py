@@ -6,10 +6,10 @@ setup(
     name='ckanext-odn-pipeline',
     version=version,
     description="""
-    Adding dataset_purge api action for sysadmins only
+    Extension for administring pipelines
     """,
     long_description="""
-    Adding dataset_purge api action for sysadmins only
+    Extension for administring pipelines
     """,
     classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
     keywords='',

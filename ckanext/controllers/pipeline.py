@@ -9,6 +9,7 @@ import ckan.lib.helpers as h
 import ckan.lib.plugins
 import ckan.logic as logic
 import ckan.model as model
+import ckan.plugins.toolkit as toolkit
 
 from ckan.common import _, request, c
 from ckanext.model.pipelines import Pipelines
@@ -61,12 +62,13 @@ class ICController(base.BaseController):
         
         lookup_package_plugin(package_type).setup_template_variables(context, {'id': id})
     
-    def edit(self, id):
+    
+    def show(self, id):
         self._load(id)
         return render('package/pipelines.html')
     
     
-    def choose_action(self, id):
+    def choose_pipeline(self, id):
         data = request.POST
         if u'action' in data:
             action = data[u'action']
@@ -77,17 +79,14 @@ class ICController(base.BaseController):
                 abort(404, _('Not implemented yet'))
         else:
             abort(404, _('Action was not choosed!'))
-            
     
     
-    def assign_pipeline(self, id):
+    def choose_action(self, id):
         self._load(id) 
         return render('pipeline/choose_assign_action.html')
     
     
     def assign(self, id):
-        self._load(id)
-
         pipe = None
         data = request.POST
         if u'pipeline' in data:
@@ -106,30 +105,36 @@ class ICController(base.BaseController):
         try:
             check_access('package_update', context, data_dict)
             package = get_action('package_show')(context, data_dict)
-            # TODO add pipe
+            # adds pipe association
             package_pipe = Pipelines(package['id'], pipe['id'], name=pipe['name'])
             package_pipe.save() # this adds and commits too
+            h.flash_success("Pipeline assigned successfully.")
         except Exception, e:
-            h.flash_error(str(e))
+            h.flash_error('Failed to assign pipeline: ' + str(e))
 #         except NotFound:
 #             abort(404, _('Dataset not found'))
 #         except NotAuthorized, e:
 #             abort(401, _('User %r not authorized to edit %s') % (c.user, id))
         
-
-        return render('package/pipelines.html')
+        base.redirect(h.url_for('pipe_assign', id=id))
     
-    def remove_pipe(self, package_id, pipeline_id):
-        assert package_id
+    def remove_pipe(self, id, pipeline_id):
+        assert id
         assert pipeline_id
         
         try:
-            pipe = Pipelines(package_id, pipeline_id).get()
+            data_dict = {'id': id}
+            context = {'model': model, 'session': model.Session,
+                   'user': c.user or c.author,
+                   'auth_user_obj': c.userobj}
+            package = get_action('package_show')(context, data_dict)
+            # id is most probably is package.name so we have to get actual id
+            pipe = Pipelines(package['id'], pipeline_id).get()
             
             if not pipe:
                 h.flash_error("Couldn't remove pipeline, because\
                 there is no such pipeline assigned to this dataset.")
-                return self.edit(package_id)
+                return self.show(package['id'])
             
             pipe.delete()
             pipe.commit()
@@ -138,4 +143,4 @@ class ICController(base.BaseController):
             h.flash_error('Failed to remove pipeline from dataset: %s'\
                            % (str(e),))
         
-        return self.edit(package_id)
+        base.redirect(h.url_for('pipe_assign', id=id))

@@ -116,10 +116,12 @@ class PipelinePlugin(plugins.SingletonPlugin):
     
     def update_config(self, config):
         # see IConfigurer plugin interface
-        # Tell CKAN to use the template files in
-        # ckanext/internal_catalog/templates.
+        
+        # Tells CKAN to use the template and
+        # snippet files
         toolkit.add_template_directory(config, 'templates')
         
+        # Tells CKAN where to find JS and CSS files
         toolkit.add_resource('fanstatic', 'ic_theme')
         
             
@@ -136,13 +138,11 @@ class PipelinePlugin(plugins.SingletonPlugin):
         with routes.mapper.SubMapper(route_map,
                 controller='ckanext.controllers.pipeline:ICController') as m:
             
-            m.connect('dataset_pipelines', '/dataset/pipelines/{id}', action='edit')
-            m.connect('/dataset/pipelines/{id}/assign_pipeline',\
-                       action='assign_pipeline')
-            m.connect('/dataset/pipelines/{id}/assign', action='assign')
-            m.connect('/dataset/pipelines/{package_id}/remove_pipeline/{pipeline_id}',\
-                       action='remove_pipe')
-            m.connect('/dataset/pipelines/{id}/choose_action', action='choose_action')
+            m.connect('dataset_pipelines', '/dataset/{id}/pipelines', action='show', conditions=GET)
+            m.connect('/dataset/{id}/pipelines/choose_pipeline', action='choose_pipeline')
+            m.connect('pipe_assign', '/dataset/{id}/pipelines', action='assign', conditions=POST)
+            m.connect('/dataset/{id}/pipelines/remove_pipeline/{pipeline_id}', action='remove_pipe')
+            m.connect('/dataset/{id}/pipelines/choose_action', action='choose_action')
         return route_map
     
     def after_map(self, route_map):
