@@ -73,10 +73,12 @@ def get_dataset_pipelines(id):
     except urllib2.URLError, e:
         h.flash_error("Couldn't connect to UV server.")
         
+        # get info only from DB
         for pipes in dataset_pipes:
             pipe = {u'id': pipes.pipeline_id, u'name':pipes.name}
             val.append(pipe) 
     else:
+        # UV connection is OK, we can get pipe info from UV
         for pipes in dataset_pipes:
             pipe, err_msg = get_pipeline(pipes.pipeline_id)
             

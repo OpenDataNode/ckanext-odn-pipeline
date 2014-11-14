@@ -11,7 +11,6 @@ Until now added features:
 TODO
 ====
 * remove state column from table
-* error handling
 
 Installation
 ============
