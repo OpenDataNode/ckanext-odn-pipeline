@@ -20,8 +20,8 @@
 		<div id="empty-descr" class="pipeline-description">
 		</div>
 		{% for descr in descriptions %}
-		<div id="{{ _(descr['id']) }}" class="hidden">
-			{{ _(descr['description']) }}
+		<div id="{{ descr['id'] }}" class="hidden">
+			{{ descr['description'] }}
 		</div>
 		{% endfor %}
 		<div class="form-actions">

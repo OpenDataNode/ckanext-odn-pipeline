@@ -19,6 +19,8 @@ import urllib
 
 # TODO this class to ckancommons
 
+TIMEOUT = 2
+
 class UVRestAPIWrapper():
     
     def __init__(self, uv_url):
@@ -32,7 +34,7 @@ class UVRestAPIWrapper():
         # Creating a dataset requires an authorization header.
     #     request.add_header('Authorization', self.api_key)
         # Make the HTTP request.
-        response = urllib2.urlopen(request)
+        response = urllib2.urlopen(request, timeout=TIMEOUT)
         assert response.code == 200
         # Use the json module to load CKAN's response into a dictionary.
         response_dict = json.loads(response.read())
@@ -49,3 +51,15 @@ class UVRestAPIWrapper():
         uv_url = self.url + '/master/api/1/pipelines/%s' % (id,)
         return self._send_request(uv_url)
 
+    def get_last_pipe_execution(self, pipe_id):
+        assert pipe_id
+        uv_url = '{0}/master/api/1/pipelines/{1}/executions/'.format(self.url, pipe_id)
+        executions = self._send_request(uv_url)
+        if executions and len(executions) > 0:
+            last_exec = executions.pop(0)
+            for execution in executions:
+                print execution['start']
+                if execution['start'] > last_exec['start']:
+                    last_exec = execution
+            return last_exec
+        return None

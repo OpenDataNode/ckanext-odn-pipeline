@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block page_primary_action %}
-  {% link_for _('Assign pipeline'), controller=controller, action='choose_action', id=c.pkg_dict.name, class_='btn', icon='plus' %}
+  {% link_for _('Add pipeline'), controller=controller, action='choose_action', id=c.pkg_dict.name, class_='btn', icon='plus' %}
 {% endblock %}
 
 {% block primary_content_inner %}
@@ -21,12 +21,12 @@
 		  <li class="dataset-item">
 		  	<div class="dataset-content">
 		  	  <h3 class="dataset-heading">
-                {{ _(pipe['name']) }} 
+                {{ pipe['name'] }} 
 		      </h3>
 		      <div class="dropdown btn-group">
 			    <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
 			      <i class="icon-share-alt"></i>
-			      Explore
+			      Action
 			      <span class="caret"></span>
 			    </a>
 			    <ul class="dropdown-menu">
@@ -41,7 +41,16 @@
 			      </li>
 			    </ul>
 			  </div>
-		      <div>{{ _(pipe['description']) }}</div>
+		      <div><p>{{ pipe['description'] }}</p></div>
+		      <div>
+		        <p>{{ _("Last execution: {time}").format(time=pipe['last_exec']) }}</p>
+		        <p>{{ _("Last execution status: ") }}
+		          {% if pipe['last_exec_status'] %}
+		          <a href="{{ pipe['last_exec_link'] }}" target="_blank">{{ pipe['last_exec_status'] }}</a>
+		          {% else %}
+		          {% endif %}
+		        </p>
+		      </div>
 		  	</div>
 		  </li>
 		  {% endfor %}

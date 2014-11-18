@@ -52,7 +52,7 @@ class ICController(base.BaseController):
         try:
             check_access('package_update', context, data_dict)
         except NotAuthorized, e:
-            abort(401, _('User %r not authorized to edit %s') % (c.user, id))
+            abort(401, _('User {user} not authorized to edit {id}').format(user=c.user, id=id))
         # check if package exists
         try:
             c.pkg_dict = get_action('package_show')(context, data_dict)
@@ -60,7 +60,7 @@ class ICController(base.BaseController):
         except NotFound:
             abort(404, _('Dataset not found'))
         except NotAuthorized:
-            abort(401, _('Unauthorized to read package %s') % id)
+            abort(401, _('Unauthorized to read package {id}').format(id=id))
         
         lookup_package_plugin(package_type).setup_template_variables(context, {'id': id})
     
@@ -102,7 +102,7 @@ class ICController(base.BaseController):
                    'auth_user_obj': c.userobj}
 
         if not pipe:
-            h.flash_notice("No pipeline selected.")
+            h.flash_notice(_("No pipeline selected."))
             base.redirect(h.url_for('dataset_pipelines', id=id))
             return
 
@@ -112,17 +112,17 @@ class ICController(base.BaseController):
             
             # checks if already exists
             if Pipelines.by_pipeline_id(pipe['id']):
-                h.flash_error('Pipeline is already associated to some dataset.')
+                h.flash_error(_('Pipeline is already associated to some dataset.'))
                 base.redirect(h.url_for('pipe_assign', id=id))
             else:
                 # adds pipe association
                 package_pipe = Pipelines(package['id'], pipe['id'], name=pipe['name'])
                 package_pipe.save() # this adds and commits too
-                h.flash_success("Pipeline assigned successfully.")
+                h.flash_success(_("Pipeline assigned successfully."))
         except NotFound:
             abort(404, _('Dataset not found'))
         except NotAuthorized, e:
-            abort(401, _('User %r not authorized to edit %s') % (c.user, id))
+            abort(401, _('User {user} not authorized to edit {id}').format(user=c.user, id=id))
         
         base.redirect(h.url_for('pipe_assign', id=id))
     
@@ -141,16 +141,16 @@ class ICController(base.BaseController):
             pipe = Pipelines(package['id'], pipeline_id).get()
             
             if not pipe:
-                h.flash_error("Couldn't remove pipeline, because\
-                there is no such pipeline assigned to this dataset.")
+                h.flash_error(_("Couldn't remove pipeline, because\
+                there is no such pipeline assigned to this dataset."))
                 base.redirect(h.url_for('pipe_assign', id=id))
             else:
                 pipe.delete()
                 pipe.commit()
-                h.flash_success('Pipeline removed from dataset successfully')
+                h.flash_success(_('Pipeline removed from dataset successfully'))
         except NotFound:
             abort(404, _('Dataset not found'))
         except NotAuthorized, e:
-            abort(401, _('User %r not authorized to edit %s') % (c.user, id))
+            abort(401, _('User {user} not authorized to edit {id}').format(user=c.user, id=id))
         
         base.redirect(h.url_for('pipe_assign', id=id))

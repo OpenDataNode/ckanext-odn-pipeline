@@ -11,12 +11,10 @@ import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 import ckan.lib.helpers as h
 
-
-# from ckan.common import OrderedDict, _, json, request, c, g, response
+from ckan.common import _
 from ckanext.pipeline.uv_helper import UVRestAPIWrapper
 from ckanext.model.pipelines import Pipelines
 import urllib2
-
 
 GET = dict(method=['GET'])
 POST = dict(method=['POST'])
@@ -32,8 +30,7 @@ def get_all_pipelines():
         pipes = uv_api.get_pipelines()
         return pipes
     except Exception, e:
-        h.flash_error("Couldn't get pipelines, probably UV is not responding: %s"\
-                       % (str(e),))
+        h.flash_error(_("Couldn't get pipelines, probably UV is not responding: {error}").format(error=e))
         return None
 
 def get_pipeline(pipe_id):
@@ -43,7 +40,7 @@ def get_pipeline(pipe_id):
         pipe = uv_api.get_pipeline_by_id(pipe_id)
         return pipe, None
     except urllib2.HTTPError, e:
-        error_msg ="Couldn't get pipeline with id = %s: %s" % (pipe_id, str(e),)
+        error_msg =_("Couldn't get pipeline with id = {pipe_id}: {error}").format(pipe_id=pipe_id, error=e)
         return None, error_msg
  
 def get_pipelines_not_assigned():
@@ -71,7 +68,7 @@ def get_dataset_pipelines(id):
         # try contact UV server
         pipe, err_msg = get_pipeline(-1)
     except urllib2.URLError, e:
-        h.flash_error("Couldn't connect to UV server.")
+        h.flash_error(_("Couldn't connect to UnifiedViews server."))
         
         # get info only from DB
         for pipes in dataset_pipes:
@@ -88,16 +85,41 @@ def get_dataset_pipelines(id):
                 pipes.name = pipe['name']
                 pipes.add() # updates
                 pipes.commit()
-                h.flash_notice('Synchronized pipeline name: %s -> %s' % (old_name, pipes.name, ))
+                h.flash_notice(_('Synchronized pipeline name: {old_name} -> {new_name}')\
+                               .format(old_name=old_name, new_name=pipes.name))
+            
+            last_exec, err_msg_exec = get_last_exec_info(pipes.pipeline_id)
+            
+            if last_exec:
+                pipe['last_exec'] = last_exec['start']
+                pipe['last_exec_status'] = last_exec['status']
+                pipe['last_exec_link'] = uv_url +'/unifiedviews/#!ExecutionList/exec={id}'\
+                                        .format(id=last_exec['id'])
+            
+            if err_msg_exec:
+                h.flash_error(err_msg_exec)
             
             if pipe:
                 val.append(pipe)
             else:
                 h.flash_error(err_msg)
         
-    return val 
+    return val
         
+
+def get_last_exec_info(pipe_id):
+    assert uv_url
+    assert pipe_id
+    try:
+        uv_api = UVRestAPIWrapper(uv_url)
+        last_exec = uv_api.get_last_pipe_execution(pipe_id)
+        return last_exec, None
+    except urllib2.HTTPError, e:
+        error_msg =_("Couldn't get pipeline execution information for pipeline id = {pipe_id}: {error}")\
+                    .format(pipe_id=pipe_id, error=e)
+        return None, error_msg
     
+
 
 def get_pipes_options():
     pipes = get_pipelines_not_assigned()
