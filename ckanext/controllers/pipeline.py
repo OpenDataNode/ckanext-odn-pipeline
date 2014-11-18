@@ -14,6 +14,9 @@ from ckan.common import _, request, c
 from ckanext.model.pipelines import Pipelines
 from ckanext.pipeline.plugin import get_pipeline
 
+import pylons.config as config
+uv_url = config.get('odn.uv.url', None)
+
 NotFound = logic.NotFound
 NotAuthorized = logic.NotAuthorized
 
@@ -64,7 +67,8 @@ class ICController(base.BaseController):
     
     def show(self, id):
         self._load(id)
-        return render('package/pipelines.html')
+        vars = {'uv_edit_url': uv_url + '/unifiedviews/#!PipelineEdit/{pipe_id}'}
+        return render('package/pipelines.html', extra_vars = vars)
     
     
     def choose_pipeline(self, id):

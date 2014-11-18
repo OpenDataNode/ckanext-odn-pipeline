@@ -9,3 +9,13 @@
 div.hidden {
 	display: none;
 }
+
+.dataset-item {
+	position: relative;
+}
+
+.dataset-content .btn-group {
+	position: absolute;
+	top: 5px;
+	right: 10px;
+}

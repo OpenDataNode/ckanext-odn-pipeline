@@ -4,6 +4,11 @@
 
 {% set controller = 'ckanext.controllers.pipeline:ICController' %}
 
+{% block styles %}
+  {{ super() }}
+  {% resource 'ic_theme/pipeline.css' %}
+{% endblock %}
+
 {% block page_primary_action %}
   {% link_for _('Assign pipeline'), controller=controller, action='choose_action', id=c.pkg_dict.name, class_='btn', icon='plus' %}
 {% endblock %}
@@ -16,8 +21,26 @@
 		  <li class="dataset-item">
 		  	<div class="dataset-content">
 		  	  <h3 class="dataset-heading">
-                {{ _(pipe['name']) }}  {% link_for _(''), controller=controller, action='remove_pipe', id=c.pkg_dict.name, pipeline_id=pipe['id'], class_='btn', icon='minus' %}
+                {{ _(pipe['name']) }} 
 		      </h3>
+		      <div class="dropdown btn-group">
+			    <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+			      <i class="icon-share-alt"></i>
+			      Explore
+			      <span class="caret"></span>
+			    </a>
+			    <ul class="dropdown-menu">
+			      <li>
+			      	<a href="{{ uv_edit_url.format(pipe_id=pipe['id']) }}" target="_blank">
+			      	  <i class="icon-edit"></i>
+			      	  {{ _('Configure manually') }}
+			      	</a>
+			      </li>
+			      <li>
+			      	{% link_for _('Remove'), controller=controller, action='remove_pipe', id=c.pkg_dict.name, pipeline_id=pipe['id'] %}
+			      </li>
+			    </ul>
+			  </div>
 		      <div>{{ _(pipe['description']) }}</div>
 		  	</div>
 		  </li>

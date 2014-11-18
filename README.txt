@@ -29,7 +29,7 @@ Add extension to ckan config: /etc/ckan/default/production.ini
 ckan.plugins = pipeline
 
 to [app:main] add:
-internal.catalog.uv.url = http://url_to_uv.com:8080
+odn.uv.url = http://url_to_uv.com:8080
 
 DB init
 =======

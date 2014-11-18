@@ -22,7 +22,7 @@ GET = dict(method=['GET'])
 POST = dict(method=['POST'])
 
 
-uv_url = config.get('internal.catalog.uv.url', None)
+uv_url = config.get('odn.uv.url', None)
 
 # Our custom template helper function.
 def get_all_pipelines():
