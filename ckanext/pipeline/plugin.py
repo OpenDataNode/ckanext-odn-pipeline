@@ -15,6 +15,7 @@ from ckan.common import _
 from ckanext.pipeline.uv_helper import UVRestAPIWrapper
 from ckanext.model.pipelines import Pipelines
 import urllib2
+from dateutil.parser import parse
 
 GET = dict(method=['GET'])
 POST = dict(method=['POST'])
@@ -91,7 +92,7 @@ def get_dataset_pipelines(id):
             last_exec, err_msg_exec = get_last_exec_info(pipes.pipeline_id)
             
             if last_exec:
-                pipe['last_exec'] = last_exec['start']
+                pipe['last_exec'] = format_date(last_exec['start'])
                 pipe['last_exec_status'] = last_exec['status']
                 pipe['last_exec_link'] = uv_url +'/unifiedviews/#!ExecutionList/exec={id}'\
                                         .format(id=last_exec['id'])
@@ -131,6 +132,15 @@ def get_pipes_options():
             descriptions.append({'id':pipe['id'], 'description':pipe[u'description']})
     return options, descriptions
 
+
+def format_date(datetime_str):
+    """
+    Formats datetime str to:
+    24. Jul 2012, 23:14
+    """
+    # TODO timezone
+    date = parse(datetime_str)
+    return date.strftime("%d. %b %Y, %H:%M")
 
 class PipelinePlugin(plugins.SingletonPlugin):
     

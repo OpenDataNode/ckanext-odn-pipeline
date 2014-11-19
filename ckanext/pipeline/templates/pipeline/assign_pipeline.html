@@ -8,13 +8,15 @@
 
 {% block subtitle %}{{ _('Choose existing pipeline') }} - {{ h.dataset_display_name(pkg) }}{% endblock %}
 
+{% set controller = 'ckanext.controllers.pipeline:ICController' %}
+
 {% block page_primary_action %}{% endblock %}
 
 {% block primary_content_inner %}
 	{% resource 'ic_theme/pipelines.js' %}
 	{% set options, descriptions = h.get_pipes_options() %}
 	{% snippet 'pipeline/snippets/stages.html', stages=['complete', 'active'] %}
-	<form method='post' class="module-content form-vertical" action="{% url_for controller='ckanext.controllers.pipeline:ICController', action='assign', id=c.pkg_dict.name %}">
+	<form method='post' class="module-content form-vertical" action="{% url_for controller=controller, action='assign', id=c.pkg_dict.name %}">
 		{{ form.select('pipeline', label=_('Select pipeline'), options=options, selected=None, error=error, attrs={'size':'5', 'style':'width:500px;'}) }}
 		<label class="control-label" for="">Selected pipeline description</label>
 		<div id="empty-descr" class="pipeline-description">
@@ -25,7 +27,8 @@
 		</div>
 		{% endfor %}
 		<div class="form-actions">
-			<input type="submit" class="btn btn-primary" value="Finish" />
+		  {% link_for _('Back'), controller=controller, action='choose_action', id=c.pkg_dict.name, class_='btn' %}
+		  <input type="submit" class="btn btn-primary" value="Finish" />
 		</div>
 	</form>
 {% endblock %}
