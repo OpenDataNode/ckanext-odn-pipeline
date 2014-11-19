@@ -30,6 +30,7 @@ ckan.plugins = pipeline
 
 to [app:main] add:
 odn.uv.url = http://url_to_uv.com:8080
+odn.uv.timeout = 5
 
 DB init
 =======

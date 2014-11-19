@@ -5,8 +5,9 @@ Created on 6.11.2014
 '''
 
 import json
+import socket
 import urllib2
-import urllib
+import pylons.config as config
 
 # doc https://team.eea.sk/wiki/pages/viewpage.action?pageId=108660564
 # TODO /pipelines/<pipeline_id>/schedules/
@@ -19,7 +20,7 @@ import urllib
 
 # TODO this class to ckancommons
 
-TIMEOUT = 2
+TIMEOUT =  int(config.get('odn.uv.timeout', 5))
 
 class UVRestAPIWrapper():
     

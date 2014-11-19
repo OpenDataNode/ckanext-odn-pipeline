@@ -4,6 +4,8 @@ Created on 5.11.2014
 @author: mvi
 '''
 
+import socket
+
 import pylons.config as config
 
 import routes.mapper
@@ -31,7 +33,10 @@ def get_all_pipelines():
         pipes = uv_api.get_pipelines()
         return pipes
     except Exception, e:
-        h.flash_error(_("Couldn't get pipelines, probably UV is not responding: {error}").format(error=e))
+        h.flash_error(_("Couldn't get pipelines, probably UnifiedViews is not responding: {error}").format(error=e))
+        return None
+    except socket.timeout, e:
+        h.flash_error(_("Connecting to UnifiedViews timed out."))
         return None
 
 def get_pipeline(pipe_id):
@@ -43,9 +48,16 @@ def get_pipeline(pipe_id):
     except urllib2.HTTPError, e:
         error_msg =_("Couldn't get pipeline with id = {pipe_id}: {error}").format(pipe_id=pipe_id, error=e)
         return None, error_msg
+    except socket.timeout, e:
+        error_msg = _("Connecting to UnifiedViews timed out.")
+        return None, error_msg
  
 def get_pipelines_not_assigned():
     pipes = get_all_pipelines()
+    
+    if not pipes:
+        return []
+    
     pipelines_assigned = Pipelines.get_all()
     
     # remove already assigned pipelines
@@ -118,6 +130,9 @@ def get_last_exec_info(pipe_id):
     except urllib2.HTTPError, e:
         error_msg =_("Couldn't get pipeline execution information for pipeline id = {pipe_id}: {error}")\
                     .format(pipe_id=pipe_id, error=e)
+        return None, error_msg
+    except socket.timeout, e:
+        error_msg = _("Connecting to UnifiedViews timed out.")
         return None, error_msg
     
 
