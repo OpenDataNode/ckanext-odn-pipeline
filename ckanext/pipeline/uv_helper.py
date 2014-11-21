@@ -4,6 +4,8 @@ Created on 6.11.2014
 @author: mvi
 '''
 
+import logging
+
 import json
 import socket
 import urllib2
@@ -22,6 +24,8 @@ import pylons.config as config
 
 TIMEOUT =  int(config.get('odn.uv.timeout', 5))
 
+log = logging.getLogger('ckanext')
+
 class UVRestAPIWrapper():
     
     def __init__(self, uv_url):
@@ -31,6 +35,7 @@ class UVRestAPIWrapper():
 
     def _send_request(self, uv_url):
         assert uv_url
+        log.debug("uv_helper sending request to: {0}".format(uv_url))
         request = urllib2.Request(uv_url)
         # Creating a dataset requires an authorization header.
     #     request.add_header('Authorization', self.api_key)
@@ -59,7 +64,6 @@ class UVRestAPIWrapper():
         if executions and len(executions) > 0:
             last_exec = executions.pop(0)
             for execution in executions:
-                print execution['start']
                 if execution['start'] > last_exec['start']:
                     last_exec = execution
             return last_exec
