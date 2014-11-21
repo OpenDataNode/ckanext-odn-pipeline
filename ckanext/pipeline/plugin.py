@@ -25,6 +25,8 @@ POST = dict(method=['POST'])
 uv_url = config.get('odn.uv.url', None)
 uv_api_url = config.get('odn.uv.api.url', None)
 
+import logging
+log = logging.getLogger('ckanext')
 
 # Our custom template helper function.
 def get_all_pipelines():
@@ -34,10 +36,12 @@ def get_all_pipelines():
         pipes = uv_api.get_pipelines()
         return pipes
     except Exception, e:
-        h.flash_error(_("Couldn't get pipelines, probably UnifiedViews is not responding: {error}").format(error=e))
+        h.flash_error(_("Couldn't get pipelines, probably UnifiedViews is not responding."))
+        log.exception(e)
         return None
     except socket.timeout, e:
         h.flash_error(_("Connecting to UnifiedViews timed out."))
+        log.exception(e)
         return None
 
 def get_pipeline(pipe_id):
@@ -73,50 +77,47 @@ def get_pipelines_not_assigned():
     
     return unassigned
 
-def get_dataset_pipelines(id):
-    assert id
-    dataset_pipes = Pipelines.by_dataset_id(id)
+def get_dataset_pipelines(package_id):
+    assert package_id
+    dataset_pipes = Pipelines.by_dataset_id(package_id)
     
     val = []
     try:
-        # try contact UV server
-        pipe, err_msg = get_pipeline(-1)
-    except urllib2.URLError, e:
-        h.flash_error(_("Couldn't connect to UnifiedViews server."))
-        
-        # get info only from DB
-        for pipes in dataset_pipes:
-            pipe = {u'id': pipes.pipeline_id, u'name':pipes.name}
-            val.append(pipe) 
-    else:
         # UV connection is OK, we can get pipe info from UV
         for pipes in dataset_pipes:
             pipe, err_msg = get_pipeline(pipes.pipeline_id)
             
             # name synchronization
-            if pipes.name != pipe['name']:
+            if pipe and pipes.name != pipe['name']:
                 old_name = pipes.name
                 pipes.name = pipe['name']
                 pipes.add() # updates
                 pipes.commit()
                 h.flash_notice(_('Synchronized pipeline name: {old_name} -> {new_name}')\
                                .format(old_name=old_name, new_name=pipes.name))
-            
-            last_exec, err_msg_exec = get_last_exec_info(pipes.pipeline_id)
-            
-            if last_exec:
-                pipe['last_exec'] = format_date(last_exec['start'])
-                pipe['last_exec_status'] = last_exec['status']
-                pipe['last_exec_link'] = uv_url +'/#!ExecutionList/exec={id}'\
-                                        .format(id=last_exec['id'])
-            
-            if err_msg_exec:
-                h.flash_error(err_msg_exec)
+            if pipe:
+                last_exec, err_msg_exec = get_last_exec_info(pipes.pipeline_id)
+                
+                if last_exec:
+                    pipe['last_exec'] = format_date(last_exec['start'])
+                    pipe['last_exec_status'] = last_exec['status']
+                    pipe['last_exec_link'] = uv_url +'/#!ExecutionList/exec={id}'\
+                                            .format(id=last_exec['id'])
+                
+                if err_msg_exec:
+                    h.flash_error(err_msg_exec)
             
             if pipe:
                 val.append(pipe)
             else:
-                h.flash_error(err_msg)
+                val.append({u'id': pipes.pipeline_id, u'name':pipes.name, u'error': err_msg})
+    except urllib2.URLError:
+        h.flash_error(_("Couldn't contact to UnifiedViews server."))
+        
+        # get info only from DB
+        for pipes in dataset_pipes:
+            pipe = {u'id': pipes.pipeline_id, u'name':pipes.name}
+            val.append(pipe) 
         
     return val
         
