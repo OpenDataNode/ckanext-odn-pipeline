@@ -193,6 +193,8 @@ class PipelinePlugin(plugins.SingletonPlugin):
             m.connect('pipe_assign', '/dataset/{id}/pipelines', action='assign', conditions=POST)
             m.connect('/dataset/{id}/pipelines/remove_pipeline/{pipeline_id}', action='remove_pipe')
             m.connect('/dataset/{id}/pipelines/choose_action', action='choose_action')
+            m.connect('/dataset/{id}/pipelines/create_new', action='create_pipe_manually', conditions=POST)
+            
         return route_map
     
     def after_map(self, route_map):

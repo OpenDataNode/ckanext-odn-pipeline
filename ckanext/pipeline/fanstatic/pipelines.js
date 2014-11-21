@@ -7,4 +7,8 @@ $( document ).ready(function() {
 	    $(".pipeline-description").removeClass().addClass("hidden");
 	    $( "#" + id ).removeClass().addClass("pipeline-description");
 	  });
+	
+	$("#finish-create-pipe").click(function() {
+		window.location = $("#link-show").text();
+	});
 });

@@ -1,0 +1,26 @@
+{% extends 'pipeline/choose_assign_action.html' %}
+
+{% import 'macros/form.html' as form %}
+{% block styles %}
+  {{ super() }}
+  {% resource 'ic_theme/pipeline.css' %}
+{% endblock %}
+
+{% block subtitle %}{{ _('Creating new pipeline') }} - {{ h.dataset_display_name(pkg) }}{% endblock %}
+
+{% set controller = 'ckanext.controllers.pipeline:ICController' %}
+
+{% block page_primary_action %}{% endblock %}
+
+{% block primary_content_inner %}
+  {% set options, descriptions = h.get_pipes_options() %}
+  {% snippet 'pipeline/snippets/stages.html', stages=['complete', 'active'] %}
+  <form method='post' class="module-content form-horizontal" action="{% url_for controller=controller, action='create_pipe_manually', id=c.pkg_dict.name %}">
+  	{{ form.input('name', label=_('Name'), placeholder=_('Pipeline name'), value='', error=error, classes=[]) }}
+  	{{ form.textarea('description', id='description', label=_('Description'), placeholder='Pipeline description', error=error) }}
+    <div class="form-actions">
+      {% link_for _('Back'), controller=controller, action='choose_action', id=c.pkg_dict.name, class_='btn' %}
+      <input type="submit" class="btn btn-primary" value="Finish" />
+    </div>
+  </form>
+{% endblock %}

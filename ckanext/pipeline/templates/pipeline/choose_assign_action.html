@@ -17,6 +17,10 @@
             <input id="radio1" name="action" value="existing" type="radio" class="radio" checked="checked" />
             Existing pipeline
           </label>
+          <label for="radio2" class="radio">
+            <input id="radio2" name="action" value="created-manually" type="radio" class="radio" />
+            Create new manually
+          </label>
           <div class="form-actions">
           	{% link_for _('Back'), controller=controller, action='show', id=c.pkg_dict.name, class_='btn' %}
 			<input type="submit" class="btn btn-primary" value="Next step" />

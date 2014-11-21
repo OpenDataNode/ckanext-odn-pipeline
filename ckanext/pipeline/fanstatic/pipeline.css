@@ -19,3 +19,7 @@ div.hidden {
 	top: -5px;
 	right: 10px;
 }
+
+div.error {
+	color: red;
+}

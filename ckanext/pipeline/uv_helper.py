@@ -7,7 +7,8 @@ Created on 6.11.2014
 import logging
 
 import json
-import socket
+import requests
+import urllib
 import urllib2
 import pylons.config as config
 
@@ -37,13 +38,22 @@ class UVRestAPIWrapper():
         assert uv_url
         log.debug("uv_helper sending request to: {0}".format(uv_url))
         request = urllib2.Request(uv_url)
-        # Creating a dataset requires an authorization header.
-    #     request.add_header('Authorization', self.api_key)
         # Make the HTTP request.
         response = urllib2.urlopen(request, timeout=TIMEOUT)
         assert response.code == 200
         # Use the json module to load CKAN's response into a dictionary.
         response_dict = json.loads(response.read())
+        return response_dict
+    
+    def _send_request_with_data(self, uv_url, data_string):
+        """Sends JSON data
+        """
+        print data_string
+        assert uv_url
+        headers = {'content-type': 'application/json'}
+        response = requests.post(uv_url, data=data_string, headers=headers)
+        assert response.status_code == 200
+        response_dict = response.json()
         return response_dict
     
     
@@ -52,10 +62,17 @@ class UVRestAPIWrapper():
         return self._send_request(uv_url)
     
     
-    def get_pipeline_by_id(self, id):
-        assert id
-        uv_url = '{0}/pipelines/{1}'.format(self.url, id)
+    def get_pipeline_by_id(self, pipe_id):
+        assert pipe_id
+        uv_url = '{0}/pipelines/{1}'.format(self.url, pipe_id)
         return self._send_request(uv_url)
+
+
+    def create_pipeline(self, name, description):
+        uv_url = '{0}/pipelines'.format(self.url)
+        data = {'name':name, 'description': description}
+        return self._send_request_with_data(uv_url, json.dumps(data))
+        
 
     def get_last_pipe_execution(self, pipe_id):
         assert pipe_id
