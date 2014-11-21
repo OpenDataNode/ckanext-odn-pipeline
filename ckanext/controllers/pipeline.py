@@ -67,7 +67,7 @@ class ICController(base.BaseController):
     
     def show(self, id):
         self._load(id)
-        vars = {'uv_edit_url': uv_url + '/unifiedviews/#!PipelineEdit/{pipe_id}'}
+        vars = {'uv_edit_url': uv_url + '/#!PipelineEdit/{pipe_id}'}
         return render('package/pipelines.html', extra_vars = vars)
     
     

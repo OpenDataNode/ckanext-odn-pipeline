@@ -1,9 +1,9 @@
 .pipeline-description {
-    border: 1px solid #cccccc;
     background-color: #ffffff;
     padding: 10px 10px;
     width: 500px;
-    border-radius: 3px;
+    height: 200px;
+    overflow: auto;
 }
 
 div.hidden {
@@ -16,6 +16,6 @@ div.hidden {
 
 .dataset-content .btn-group {
 	position: absolute;
-	top: 5px;
+	top: -5px;
 	right: 10px;
 }

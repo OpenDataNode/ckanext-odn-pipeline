@@ -23,7 +23,11 @@
 		</div>
 		{% for descr in descriptions %}
 		<div id="{{ descr['id'] }}" class="hidden">
+			{% if descr['description'] %}
 			{{ descr['description'] }}
+			{% else %}
+			{{ _('N/A') }}
+			{% endif %}
 		</div>
 		{% endfor %}
 		<div class="form-actions">

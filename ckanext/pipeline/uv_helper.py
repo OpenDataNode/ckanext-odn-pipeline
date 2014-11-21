@@ -43,18 +43,18 @@ class UVRestAPIWrapper():
     
     
     def get_pipelines(self):
-        uv_url = self.url + '/master/api/1/pipelines'
+        uv_url = '{0}/pipelines'.format(self.url)
         return self._send_request(uv_url)
     
     
     def get_pipeline_by_id(self, id):
         assert id
-        uv_url = self.url + '/master/api/1/pipelines/%s' % (id,)
+        uv_url = '{0}/pipelines/{1}'.format(self.url, id)
         return self._send_request(uv_url)
 
     def get_last_pipe_execution(self, pipe_id):
         assert pipe_id
-        uv_url = '{0}/master/api/1/pipelines/{1}/executions/'.format(self.url, pipe_id)
+        uv_url = '{0}/pipelines/{1}/executions/'.format(self.url, pipe_id)
         executions = self._send_request(uv_url)
         if executions and len(executions) > 0:
             last_exec = executions.pop(0)

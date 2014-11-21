@@ -29,7 +29,8 @@ Add extension to ckan config: /etc/ckan/default/production.ini
 ckan.plugins = pipeline
 
 to [app:main] add:
-odn.uv.url = http://url_to_uv.com:8080
+odn.uv.url = http://host/unifiedviews
+odn.uv.api.url = http://127.0.0.1:8080/master/api/1
 odn.uv.timeout = 5
 
 DB init

@@ -22,14 +22,15 @@ from dateutil.parser import parse
 GET = dict(method=['GET'])
 POST = dict(method=['POST'])
 
-
 uv_url = config.get('odn.uv.url', None)
+uv_api_url = config.get('odn.uv.api.url', None)
+
 
 # Our custom template helper function.
 def get_all_pipelines():
-    assert uv_url
+    assert uv_api_url
     try:
-        uv_api = UVRestAPIWrapper(uv_url)
+        uv_api = UVRestAPIWrapper(uv_api_url)
         pipes = uv_api.get_pipelines()
         return pipes
     except Exception, e:
@@ -40,9 +41,9 @@ def get_all_pipelines():
         return None
 
 def get_pipeline(pipe_id):
-    assert uv_url
+    assert uv_api_url
     try:
-        uv_api = UVRestAPIWrapper(uv_url)
+        uv_api = UVRestAPIWrapper(uv_api_url)
         pipe = uv_api.get_pipeline_by_id(pipe_id)
         return pipe, None
     except urllib2.HTTPError, e:
@@ -106,7 +107,7 @@ def get_dataset_pipelines(id):
             if last_exec:
                 pipe['last_exec'] = format_date(last_exec['start'])
                 pipe['last_exec_status'] = last_exec['status']
-                pipe['last_exec_link'] = uv_url +'/unifiedviews/#!ExecutionList/exec={id}'\
+                pipe['last_exec_link'] = uv_url +'/#!ExecutionList/exec={id}'\
                                         .format(id=last_exec['id'])
             
             if err_msg_exec:
@@ -121,10 +122,10 @@ def get_dataset_pipelines(id):
         
 
 def get_last_exec_info(pipe_id):
-    assert uv_url
+    assert uv_api_url
     assert pipe_id
     try:
-        uv_api = UVRestAPIWrapper(uv_url)
+        uv_api = UVRestAPIWrapper(uv_api_url)
         last_exec = uv_api.get_last_pipe_execution(pipe_id)
         return last_exec, None
     except urllib2.HTTPError, e:
