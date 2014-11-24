@@ -35,6 +35,8 @@ class UVRestAPIWrapper():
         
 
     def _send_request(self, uv_url):
+        """Sends GET request
+        """
         assert uv_url
         log.debug("uv_helper sending request to: {0}".format(uv_url))
         request = urllib2.Request(uv_url)
@@ -46,13 +48,14 @@ class UVRestAPIWrapper():
         return response_dict
     
     def _send_request_with_data(self, uv_url, data_string):
-        """Sends JSON data
+        """Sends POST request with JSON data
         """
         print data_string
         assert uv_url
         headers = {'content-type': 'application/json'}
         response = requests.post(uv_url, data=data_string, headers=headers)
-        assert response.status_code == 200
+        if response.status_code != 200:
+            raise Exception("Error sending request to {0}: {1}".format(uv_url, response.text))
         response_dict = response.json()
         return response_dict
     
@@ -85,3 +88,10 @@ class UVRestAPIWrapper():
                     last_exec = execution
             return last_exec
         return None
+
+    def execute_now(self, pipe_id, is_debugging=False):
+        assert pipe_id
+        uv_url = '{0}/pipelines/{1}/executions/'.format(self.url, pipe_id)
+        data = {'debugging':is_debugging}
+        return self._send_request_with_data(uv_url, json.dumps(data))
+

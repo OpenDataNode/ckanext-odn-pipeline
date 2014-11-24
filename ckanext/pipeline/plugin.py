@@ -195,6 +195,7 @@ class PipelinePlugin(plugins.SingletonPlugin):
             m.connect('/dataset/{id}/pipelines/remove_pipeline/{pipeline_id}', action='remove_pipe')
             m.connect('/dataset/{id}/pipelines/choose_action', action='choose_action')
             m.connect('/dataset/{id}/pipelines/create_new', action='create_pipe_manually', conditions=POST)
+            m.connect('/dataset/{id}/pipelines/execute/{pipeline_id}', action='execute_now')
             
         return route_map
     

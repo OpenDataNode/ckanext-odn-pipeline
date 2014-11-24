@@ -10,11 +10,11 @@
 {% endblock %}
 
 {% block page_primary_action %}
-  {% link_for _('Add pipeline'), controller=controller, action='choose_action', id=c.pkg_dict.name, class_='btn', icon='plus' %}
+  {% link_for _('Add pipeline'), controller=controller, action='choose_action', id=pkg_dict.name, class_='btn', icon='plus' %}
 {% endblock %}
 
 {% block primary_content_inner %}
-	{% set pipelines = h.get_dataset_pipelines(c.pkg_dict['id']) %}
+	{% set pipelines = h.get_dataset_pipelines(pkg_dict['id']) %}
 	{% if pipelines|length > 0 %}
 		<ul class="dataset-list unstyled">
 		  {% for pipe in pipelines %}
@@ -40,7 +40,10 @@
 			        <a href="{{ uv_scheduler_url }}" target="_blank">{{ _('Schedule') }}</a>
 			      </li>
 			      <li>
-			      	{% link_for _('Remove'), controller=controller, action='remove_pipe', id=c.pkg_dict.name, pipeline_id=pipe['id'] %}
+			        {% link_for _('Execute now'), controller=controller, action='execute_now', id=pkg_dict.name, pipeline_id=pipe['id'] %}
+			      </li>
+			      <li>
+			      	{% link_for _('Remove'), controller=controller, action='remove_pipe', id=pkg_dict.name, pipeline_id=pipe['id'] %}
 			      </li>
 			    </ul>
 			  </div>

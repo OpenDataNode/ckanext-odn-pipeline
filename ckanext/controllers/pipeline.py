@@ -227,3 +227,18 @@ class ICController(base.BaseController):
                 'err_msg': err_msg}
         return render('pipeline/create_pipeline_response.html', extra_vars=vars)
 
+
+    def execute_now(self, id, pipeline_id):
+        
+        try:
+            uv_api = UVRestAPIWrapper(uv_api_url)
+            execution = uv_api.execute_now(pipeline_id)
+            log.debug("started execution: {0}".format(execution))
+        except Exception, e:
+            err_msg = _("Couldn't create/associate pipeline, probably UnifiedViews is not responding.")
+            log.exception(e)
+        except socket.timeout, e:
+            err_msg = _("Connecting to UnifiedViews timed out.")
+        
+        
+        base.redirect(h.url_for('dataset_pipelines', id=id))
