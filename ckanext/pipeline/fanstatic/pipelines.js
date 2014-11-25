@@ -11,4 +11,18 @@ $( document ).ready(function() {
 	$("#finish-create-pipe").click(function() {
 		window.location = $("#link-show").text();
 	});
+	
+	$(".pipeline-filter").on('input',function(e){
+		filter($(".pipeline-filter").val());
+	});
 });
+
+function filter(filterStr) {
+	$("option").each(function() {
+		if ($(this).text().toLowerCase().indexOf(filterStr.toLowerCase()) != -1){
+			$(this).show();
+		} else {
+			$(this).hide();
+		}
+	});
+}

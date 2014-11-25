@@ -17,8 +17,14 @@
 	{% set options, descriptions = h.get_pipes_options() %}
 	{% snippet 'pipeline/snippets/stages.html', stages=['complete', 'active'] %}
 	<form method='post' class="module-content form-vertical" action="{% url_for controller=controller, action='assign', id=c.pkg_dict.name %}">
-		{{ form.select('pipeline', label=_('Select pipeline'), options=options, selected=None, error=error, attrs={'size':'5', 'style':'width:500px;'}) }}
-		<label class="control-label" for="">Selected pipeline description</label>
+		<label class="filter-label" for="filter">Select pipeline</label>
+		<input id="filter" type="text" class="pipeline-filter"/>
+		<select id="pipeline" name="pipeline" class="pipeline-select" size="5">
+	      {% for option in options %}
+	        <option value="{{ option.value }}"{% if option.value == selected %} selected{% endif %}>{{ option.text or option.value }}</option>
+	      {% endfor %}
+	    </select>
+		<label class="control-label">Selected pipeline description</label>
 		<div id="empty-descr" class="pipeline-description">
 		</div>
 		{% for descr in descriptions %}
