@@ -177,6 +177,11 @@ class ICController(base.BaseController):
         if u'description' in data:
             description = data[u'description']
             
+        if not name.strip():
+            h.flash_error(_("Pipeline name is required."))
+            self._load(id)
+            return render('pipeline/create_pipeline.html', extra_vars={'descr': description})
+            
         data_dict = {'id': id}
         context = {'model': model, 'session': model.Session,
                    'user': c.user or c.author,
