@@ -16,7 +16,7 @@ import pylons.config as config
 # TODO /pipelines/<pipeline_id>/schedules/
 # TODO /pipelines/<pipeline_id>/schedules/<id>
 # TODO /pipelines/<pipeline_id>/schedules/<schedule_id>
-# TODO /pipelines/<pipeline_id>/executions
+# TODO GET /pipelines/<pipeline_id>/executions
 # TODO /pipelines/<pipeline_id>/executions/<execution_id>
 # TODO /pipelines/<pipeline_id>/executions
 # TODO /pipelines/<pipeline_id>/executions/<execution_id>/events

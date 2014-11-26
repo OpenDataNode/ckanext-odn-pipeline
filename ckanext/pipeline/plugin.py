@@ -93,6 +93,19 @@ def get_pipelines_not_assigned():
     
     return unassigned
 
+
+def synchonize_name(actual_pipe, pipes):
+    """Updates name in the pipelines table
+    according to the name it get from uv rest api call
+    """
+    old_name = pipes.name
+    pipes.name = actual_pipe['name']
+    pipes.add() # updates
+    pipes.commit()
+    log.info('Synchronized pipeline name: {old_name} -> {new_name}'\
+             .format(old_name=old_name, new_name=pipes.name))
+
+
 def get_dataset_pipelines(package_id):
     assert package_id
     dataset_pipes = Pipelines.by_dataset_id(package_id)
@@ -105,24 +118,10 @@ def get_dataset_pipelines(package_id):
             
             # name synchronization
             if pipe and pipes.name != pipe['name']:
-                old_name = pipes.name
-                pipes.name = pipe['name']
-                pipes.add() # updates
-                pipes.commit()
-                h.flash_notice(_('Synchronized pipeline name: {old_name} -> {new_name}')\
-                               .format(old_name=old_name, new_name=pipes.name))
+                synchonize_name(pipe, pipes)
+                
             if pipe:
-                last_exec, err_msg_exec = get_last_exec_info(pipes.pipeline_id)
-                
-                if last_exec:
-                    pipe['last_exec'] = format_date(last_exec['start'])
-                    pipe['last_exec_status'] = STATUSES[last_exec['status']]
-                    pipe['last_exec_link'] = uv_url +'/#!ExecutionList/exec={id}'\
-                                            .format(id=last_exec['id'])
-                
-                if err_msg_exec:
-                    h.flash_error(err_msg_exec)
-                    
+                add_last_exec_info(pipes.pipeline_id, pipe)                    
                 add_next_exec_info(pipes.pipeline_id, pipe)
             
             if pipe:
@@ -140,25 +139,38 @@ def get_dataset_pipelines(package_id):
     return val
         
 
-def get_last_exec_info(pipe_id):
+def add_last_exec_info(pipe_id, pipe):
     assert uv_api_url
     assert pipe_id
+    assert pipe
+    
+    error_msg = None
     try:
         uv_api = UVRestAPIWrapper(uv_api_url)
         last_exec = uv_api.get_last_finished_execution(pipe_id)
-        return last_exec, None
+        
+        if not last_exec:
+            return
+        
+        # adding it to pipe
+        pipe['last_exec'] = format_date(last_exec['start'])
+        pipe['last_exec_status'] = STATUSES[last_exec['status']]
+        pipe['last_exec_link'] = uv_url +'/#!ExecutionList/exec={id}'\
+            .format(id=last_exec['id'])
     except urllib2.HTTPError, e:
         error_msg =_("Couldn't get pipeline last execution information for pipeline id = {pipe_id}: {error}")\
                     .format(pipe_id=pipe_id, error=e)
-        return None, error_msg
     except socket.timeout, e:
         error_msg = _("Connecting to UnifiedViews timed out.")
-        return None, error_msg
+    
+    if error_msg:
+        h.flash_error(error_msg)
 
 
 def add_next_exec_info(pipe_id, pipe):
     assert uv_api_url
     assert pipe_id
+    assert pipe
     
     error_msg = None
     try:
@@ -178,6 +190,7 @@ def add_next_exec_info(pipe_id, pipe):
     if error_msg:
         h.flash_error(error_msg)
 
+
 def get_pipes_options():
     pipes = get_pipelines_not_assigned()
     options = []
@@ -191,8 +204,8 @@ def get_pipes_options():
 
 def format_date(datetime_str):
     """
-    Formats datetime str to:
-    24. Jul 2012, 23:14
+    Formats datetime string:
+    2012-07-24T23:14:23.516Z -> 24. Jul 2012, 23:14
     """
     if not datetime_str:
         return None
