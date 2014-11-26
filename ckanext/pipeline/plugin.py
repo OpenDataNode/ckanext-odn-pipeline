@@ -28,6 +28,22 @@ uv_api_url = config.get('odn.uv.api.url', None)
 import logging
 log = logging.getLogger('ckanext')
 
+
+STATUSES = {
+    # Next execution
+    "QUEUED": "Queued",
+    "RUNNING": "Running",
+    "CANCELLING": "Running",
+    # Last execution
+    "CANCELLED": "Cancelled",
+    "FAILED": "Failed",
+    "FINISHED_SUCCESS": "OK",
+    "FINISHED_WARNING": "Warning",
+    # empty
+    None: None,
+    "": None
+}
+
 # Our custom template helper function.
 def get_all_pipelines():
     assert uv_api_url
@@ -100,12 +116,14 @@ def get_dataset_pipelines(package_id):
                 
                 if last_exec:
                     pipe['last_exec'] = format_date(last_exec['start'])
-                    pipe['last_exec_status'] = last_exec['status']
+                    pipe['last_exec_status'] = STATUSES[last_exec['status']]
                     pipe['last_exec_link'] = uv_url +'/#!ExecutionList/exec={id}'\
                                             .format(id=last_exec['id'])
                 
                 if err_msg_exec:
                     h.flash_error(err_msg_exec)
+                    
+                add_next_exec_info(pipes.pipeline_id, pipe)
             
             if pipe:
                 val.append(pipe)
@@ -127,17 +145,38 @@ def get_last_exec_info(pipe_id):
     assert pipe_id
     try:
         uv_api = UVRestAPIWrapper(uv_api_url)
-        last_exec = uv_api.get_last_pipe_execution(pipe_id)
+        last_exec = uv_api.get_last_finished_execution(pipe_id)
         return last_exec, None
     except urllib2.HTTPError, e:
-        error_msg =_("Couldn't get pipeline execution information for pipeline id = {pipe_id}: {error}")\
+        error_msg =_("Couldn't get pipeline last execution information for pipeline id = {pipe_id}: {error}")\
                     .format(pipe_id=pipe_id, error=e)
         return None, error_msg
     except socket.timeout, e:
         error_msg = _("Connecting to UnifiedViews timed out.")
         return None, error_msg
-    
 
+
+def add_next_exec_info(pipe_id, pipe):
+    assert uv_api_url
+    assert pipe_id
+    
+    error_msg = None
+    try:
+        uv_api = UVRestAPIWrapper(uv_api_url)
+        schedule_id, next_exec, next_exec_status = uv_api.get_next_execution_time(pipe_id)
+        
+        pipe['next_exec'] = format_date(next_exec)
+        pipe['next_exec_status'] = STATUSES[next_exec_status]
+        pipe['next_exec_sched_url'] = uv_url + '/#!Scheduler' # TODO link to schedule
+        return
+    except urllib2.HTTPError, e:
+        error_msg =_("Couldn't get pipeline next execution information for pipeline id = {pipe_id}: {error}")\
+                    .format(pipe_id=pipe_id, error=e)
+    except socket.timeout, e:
+        error_msg = _("Connecting to UnifiedViews timed out.")
+
+    if error_msg:
+        h.flash_error(error_msg)
 
 def get_pipes_options():
     pipes = get_pipelines_not_assigned()
@@ -155,9 +194,12 @@ def format_date(datetime_str):
     Formats datetime str to:
     24. Jul 2012, 23:14
     """
+    if not datetime_str:
+        return None
     # TODO timezone
     date = parse(datetime_str)
     return date.strftime("%d. %b %Y, %H:%M")
+
 
 class PipelinePlugin(plugins.SingletonPlugin):
     

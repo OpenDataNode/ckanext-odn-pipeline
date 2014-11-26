@@ -52,11 +52,25 @@
 			  {% endif %}
 		      <div><p>{{ pipe['description'] }}</p></div>
 		      <div>
-		        <p>{{ _("Last execution: {time}").format(time=pipe['last_exec']) }}</p>
-		        <p>{{ _("Last execution status: ") }}
+		        <p>
+		          {{ _("Last execution: {time}, last run status: ").format(time=pipe['last_exec'] or "N/A") }}
 		          {% if pipe['last_exec_status'] %}
 		          <a href="{{ pipe['last_exec_link'] }}" target="_blank">{{ pipe['last_exec_status'] }}</a>
 		          {% else %}
+		          N/A
+		          {% endif %}
+		        </p>
+		        <p>
+		          {{ _("Next execution: ") }}
+		          {% if pipe['next_exec'] %}
+		          <a href="{{ pipe['next_exec_sched_url'] }}" target="_blank">
+		            {{ pipe['next_exec']}}
+		            {% if pipe['next_exec_status'] %}
+		       	    {{ " ({0})".format(pipe['next_exec_status']) }}
+		            {% endif %}
+		          </a>
+		          {% else %}
+		          {{ _("Not planned") }}
 		          {% endif %}
 		        </p>
 		      </div>

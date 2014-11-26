@@ -77,17 +77,51 @@ class UVRestAPIWrapper():
         return self._send_request_with_data(uv_url, json.dumps(data))
         
 
-    def get_last_pipe_execution(self, pipe_id):
+    def get_last_finished_execution(self, pipe_id):
         assert pipe_id
-        uv_url = '{0}/pipelines/{1}/executions/'.format(self.url, pipe_id)
+        uv_url = '{0}/pipelines/{1}/executions/last'.format(self.url, pipe_id)
+        try:
+            execution = self._send_request(uv_url)
+            return execution
+        except urllib2.HTTPError, err:
+            if err.code == 404:
+                return None
+            else:
+                raise err
+
+    def get_next_execution_time(self, pipe_id):
+        """ Return information about next execution
+        (schedule_id, next_execution_time, execution_status)
+        """
+        assert pipe_id
+        # get executions "QUEUED", "RUNNING", "CANCELLING"
+        uv_url = '{0}/pipelines/{1}/executions'.format(self.url, pipe_id)
         executions = self._send_request(uv_url)
-        if executions and len(executions) > 0:
-            last_exec = executions.pop(0)
-            for execution in executions:
-                if execution['start'] > last_exec['start']:
-                    last_exec = execution
-            return last_exec
-        return None
+        for execution in executions:
+            # if yes return time + status
+            if execution['status'] in {"QUEUED", "RUNNING", "CANCELLING"}:
+                print execution
+                return execution['schedule'], execution['lastChange'], execution['status']
+        
+        # if not get schedules
+        uv_url = "{0}/pipelines/{1}/schedules/".format(self.url, pipe_id)
+        schedules = self._send_request(uv_url)
+        
+        # removes ones that have no next execution
+        schedules[:] = [s for s in schedules if s['nextExecution']]
+        
+        if schedules and len(schedules) > 0:
+            
+            # pick one with nextExecution nearest in future
+            next = schedules.pop(0)
+            for schedule in schedules:
+                if schedule['nextExecution'] and schedule['nextExecution'] < next['nextExecution']:
+                    next = schedule
+            # return time
+            return next['id'], next['nextExecution'], None
+        
+        return None, None, None 
+    
 
     def execute_now(self, pipe_id, is_debugging=False):
         assert pipe_id
