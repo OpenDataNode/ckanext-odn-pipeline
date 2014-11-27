@@ -46,7 +46,8 @@ class UVRestAPIWrapper():
         # Use the json module to load CKAN's response into a dictionary.
         response_dict = json.loads(response.read())
         return response_dict
-    
+
+
     def _send_request_with_data(self, uv_url, data_string):
         """Sends POST request with JSON data
         """
@@ -89,36 +90,25 @@ class UVRestAPIWrapper():
             else:
                 raise err
 
-    def get_next_execution_time(self, pipe_id):
+
+    def get_next_execution_info(self, pipe_id):
         """ Return information about next execution
         (schedule_id, next_execution_time, execution_status)
         """
         assert pipe_id
-        # get executions "QUEUED", "RUNNING", "CANCELLING"
-        uv_url = '{0}/pipelines/{1}/executions'.format(self.url, pipe_id)
+        # find pending execution
+        uv_url = '{0}/pipelines/{1}/executions/pending'.format(self.url, pipe_id)
         executions = self._send_request(uv_url)
-        for execution in executions:
-            # if yes return time + status
-            if execution['status'] in {"QUEUED", "RUNNING", "CANCELLING"}:
-                print execution
-                return execution['schedule'], execution['lastChange'], execution['status']
+        if executions and len(executions) > 0:
+            execution = executions.pop(0)
+            return execution['schedule'], execution['lastChange'], execution['status']
         
-        # if not get schedules
-        uv_url = "{0}/pipelines/{1}/schedules/".format(self.url, pipe_id)
+        # if there is no pending execution, get next execution from schedules
+        uv_url = "{0}/pipelines/{1}/schedules/~all/scheduledexecutions".format(self.url, pipe_id)
         schedules = self._send_request(uv_url)
-        
-        # removes ones that have no next execution
-        schedules[:] = [s for s in schedules if s['nextExecution']]
-        
         if schedules and len(schedules) > 0:
-            
-            # pick one with nextExecution nearest in future
-            next = schedules.pop(0)
-            for schedule in schedules:
-                if schedule['nextExecution'] and schedule['nextExecution'] < next['nextExecution']:
-                    next = schedule
-            # return time
-            return next['id'], next['nextExecution'], None
+            schedule = schedules.pop(0)
+            return schedule['schedule'], schedule['start'], None
         
         return None, None, None 
     

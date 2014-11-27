@@ -175,7 +175,7 @@ def add_next_exec_info(pipe_id, pipe):
     error_msg = None
     try:
         uv_api = UVRestAPIWrapper(uv_api_url)
-        schedule_id, next_exec, next_exec_status = uv_api.get_next_execution_time(pipe_id)
+        schedule_id, next_exec, next_exec_status = uv_api.get_next_execution_info(pipe_id)
         
         pipe['next_exec'] = format_date(next_exec)
         pipe['next_exec_status'] = STATUSES[next_exec_status]
