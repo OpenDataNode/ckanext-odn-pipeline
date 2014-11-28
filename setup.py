@@ -6,10 +6,10 @@ setup(
     name='ckanext-odn-pipeline',
     version=version,
     description="""
-    Extension for administring pipelines
+    Extension for administration of pipelines
     """,
     long_description="""
-    Extension for administring pipelines
+    Extension for administration of UnifiedViews pipelines
     """,
     classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
     keywords='',
@@ -33,7 +33,7 @@ setup(
     entry_points=\
     """
     [ckan.plugins]
-    pipeline=ckanext.pipeline.plugin:PipelinePlugin
+    odn_pipeline=ckanext.pipeline.plugin:PipelinePlugin
     [paste.paster_command]
     pipeline-cmd = ckanext.commands.pipeline_cmd:PipelineCmd
     """,
