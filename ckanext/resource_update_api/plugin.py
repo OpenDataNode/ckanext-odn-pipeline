@@ -68,11 +68,14 @@ def resources(context, data_dict=None):
     :rtype: list of dictionaries describing the success / failure of updating or creating the resource
 
     """
-    log.debug("data_dict = " + str(data_dict))
+    log.debug("data_dict = {0}".format(data_dict))
     pipeline_id, rdf_file = get(data_dict)
     log.debug("check ok pipe id = {0}".format(pipeline_id))
     
     resources = get_resources(rdf_file)
+    
+    if not resources:
+        raise NotFound("No resources found.")
         
     model = context['model']
     dataset_to_pipeline = Pipelines.by_pipeline_id(pipeline_id)
