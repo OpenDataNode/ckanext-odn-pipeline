@@ -74,6 +74,8 @@ class ICController(base.BaseController):
     
     
     def show(self, id):
+        assert uv_url
+        
         self._load(id)
         vars = {'uv_edit_url': uv_url + '/#!PipelineEdit/{pipe_id}',
                 'uv_scheduler_url': uv_url + '/#!Scheduler'}
@@ -169,6 +171,8 @@ class ICController(base.BaseController):
         
     
     def create_pipe_manually(self, id):
+        assert uv_url
+        
         data = request.POST
         name = ''
         description = ''
