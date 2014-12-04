@@ -24,7 +24,7 @@ Installation
 ``` python setup.py install ```
 
 Add extension to ckan config: /etc/ckan/default/production.ini
-``` ckan.plugins = ckan_pipeline ```
+``` ckan.plugins = odn_pipeline ```
 
 to section [app:main] add:
 ```
