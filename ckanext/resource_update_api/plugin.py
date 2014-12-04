@@ -68,6 +68,7 @@ def resources(context, data_dict=None):
     :rtype: list of dictionaries describing the success / failure of updating or creating the resource
 
     """
+    log.debug("data_dict = " + str(data_dict))
     pipeline_id, rdf_file = get(data_dict)
     log.debug("check ok pipe id = {0}".format(pipeline_id))
     
