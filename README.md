@@ -11,6 +11,7 @@ Until now added features:
 * Shows information about last and next execution
 * Links to UV funkcionality
 * Uses ODN/UV rest API
+* Adds rest api for creating / updating resources from UnifiedViews (L-Catalog dpu)
 
 TODO
 -------
@@ -24,7 +25,8 @@ Installation
 ``` python setup.py install ```
 
 Add extension to ckan config: /etc/ckan/default/production.ini
-``` ckan.plugins = odn_pipeline ```
+
+``` ckan.plugins = odn_pipeline resource-update-api ```
 
 to section [app:main] add:
 ```
@@ -37,6 +39,7 @@ DB init
 -------
 
 After installing plugin and restarting apache server start db initialization:
+
 ``` paster --plugin=ckanext-odn-pipeline pipeline-cmd initdb --config=/etc/ckan/default/production.ini ```
 
 There should be output like this:
@@ -51,10 +54,13 @@ Uninstall
 -------
 
 Before removing extension start:
+
 ``` paster --plugin=ckanext-odn-pipeline pipeline-cmd uninstall --config=/etc/ckan/default/production.ini ```
 
 This will drop tables created in DB init script.
+
 Now you can remove plugin string from: /etc/ckan/default/production.ini
+
 And remove from python installed extension egg.
 
 Licenses

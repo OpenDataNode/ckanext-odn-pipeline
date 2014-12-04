@@ -1,0 +1,4 @@
+*.pyc
+build/lib.linux-x86_64-2.7/
+dist/
+ckanext_odn_pipeline.egg-info/
