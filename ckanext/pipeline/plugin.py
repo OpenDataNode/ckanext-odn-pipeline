@@ -140,6 +140,7 @@ def get_dataset_pipelines(package_id):
         
 
 def add_last_exec_info(pipe_id, pipe):
+    assert uv_url
     assert uv_api_url
     assert pipe_id
     assert pipe
@@ -155,8 +156,8 @@ def add_last_exec_info(pipe_id, pipe):
         # adding it to pipe
         pipe['last_exec'] = format_date(last_exec['start'])
         pipe['last_exec_status'] = STATUSES[last_exec['status']]
-        pipe['last_exec_link'] = uv_url +'/#!ExecutionList/exec={id}'\
-            .format(id=last_exec['id'])
+        pipe['last_exec_link'] = '{0}/#!ExecutionList/exec={1}'\
+            .format(uv_url, last_exec['id'])
     except urllib2.HTTPError, e:
         error_msg =_("Couldn't get pipeline last execution information for pipeline id = {pipe_id}: {error}")\
                     .format(pipe_id=pipe_id, error=e)
@@ -168,6 +169,7 @@ def add_last_exec_info(pipe_id, pipe):
 
 
 def add_next_exec_info(pipe_id, pipe):
+    assert uv_url
     assert uv_api_url
     assert pipe_id
     assert pipe
@@ -179,7 +181,7 @@ def add_next_exec_info(pipe_id, pipe):
         
         pipe['next_exec'] = format_date(next_exec)
         pipe['next_exec_status'] = STATUSES[next_exec_status]
-        pipe['next_exec_sched_url'] = uv_url + '/#!Scheduler' # TODO link to schedule
+        pipe['next_exec_sched_url'] = '{0}/#!Scheduler'.format(uv_url) # TODO link to schedule
         return
     except urllib2.HTTPError, e:
         error_msg =_("Couldn't get pipeline next execution information for pipeline id = {pipe_id}: {error}")\
