@@ -3,20 +3,17 @@ Created on 26.11.2014
 
 @author: mvi
 '''
-import rdflib
 
 import schema
 import ckan.logic as logic
 import ckan.plugins as plugins
 import ckan.new_authz as new_authz
 
-from ckan.common import _, c
-from ckan.logic import ValidationError
 
 import logging
 from ckanext.model.pipelines import Pipelines 
+from ckan.common import _, c
 from ckan.model.user import User
-from ckanext.dcat import converters
 
 NotFound = logic.NotFound
 get_action = logic.get_action
@@ -28,10 +25,11 @@ url = "http://192.168.128.23/dump"
 
 
 def get(data_dict):
-    log.debug("starting validation")
+    if 'pipelineId' not in data_dict:
+        raise NotFound('pipelineId not provided.')
     
-    schema.validate(data_dict)
-    log.debug("validation ok")
+    if 'rdf' not in data_dict:
+        raise NotFound('File containing resource information not provided.')
     
     return data_dict['pipelineId'], data_dict['rdf'].file
 
@@ -70,12 +68,14 @@ def resources(context, data_dict=None):
     """
     log.debug("data_dict = {0}".format(data_dict))
     pipeline_id, rdf_file = get(data_dict)
-    log.debug("check ok pipe id = {0}".format(pipeline_id))
     
-    resources = get_resources(rdf_file)
+    resources, msg = get_resources(rdf_file)
     
     if not resources:
-        raise NotFound("No resources found.")
+        if msg:
+            raise NotFound("No resources information found: {0}".format(msg))
+        else:
+            raise NotFound("No resources information found.")
         
     model = context['model']
     dataset_to_pipeline = Pipelines.by_pipeline_id(pipeline_id)
@@ -100,7 +100,6 @@ def resources(context, data_dict=None):
     responses = []
     for resource in resources:
         resource.pop('uri')
-        print resource
         name = resource['name']
         package_resource = get_resource_by_name(name, package_resources)
         
@@ -144,14 +143,14 @@ def get_resources(rdf_file):
         parser.parse(rdf_file.read(), _format=in_out_format)
     
         for dataset in parser.datasets():
-            return dataset['resources']
+            return dataset['resources'], None
     
     except RDFParserException, e:
-        print ('Error parsing the RDF file: {0}'.format(e))
+        log.error('Error parsing the RDF file: {0}'.format(e))
+        return None, str(e)
     except Exception, e:
         log.exception(e)
-        
-    return None
+        None, str(e)
 
 
 def resource_create(dataset_id, resource, context):
