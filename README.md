@@ -83,7 +83,7 @@ This describes communication between UnifiedViews L-Catalog DPU and CKAN. This r
 is sent by L-Catalog to create / update resources according the pipeline id. More than
 one resource can be send.
 ```JSON
-POST <host>/resources
+POST <host>/api/3/action/resources
 Accept: application/json
 
 {
