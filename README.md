@@ -29,10 +29,15 @@ Add extension to ckan config: /etc/ckan/default/production.ini
 ``` ckan.plugins = odn_pipeline resource-update-api ```
 
 to section [app:main] add:
-```
+```ApacheConf
+# pipeline
 odn.uv.url = http://HOST/unifiedviews
 odn.uv.api.url = http://127.0.0.1:8080/master/api/1
 odn.uv.timeout = 5
+
+# resource update api (L-Catalog <-> IC)
+odn.storage.rdf.uri.template = http://host/sparql?query=select {?s ?p ?o} from {storage_id}
+odn.storage.file.uri.template = http://host/dump/{storage_id}
 ```
 
 DB init

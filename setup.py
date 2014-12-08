@@ -33,7 +33,7 @@ setup(
                        'templates/pipeline/snippets/*.html']},
     include_package_data=True,
     zip_safe=False,
-    install_requires=['rdflib>=4.1.2'],
+    install_requires=[],
     entry_points=\
     """
     [ckan.plugins]

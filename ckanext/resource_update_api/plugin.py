@@ -4,13 +4,16 @@ Created on 26.11.2014
 @author: mvi
 '''
 
-import schema
 import ckan.logic as logic
 import ckan.plugins as plugins
 import ckan.new_authz as new_authz
-
-
 import logging
+import pylons.config as config
+import urllib
+import json
+
+from dateutil.parser import parse
+
 from ckanext.model.pipelines import Pipelines 
 from ckan.common import _, c
 from ckan.model.user import User
@@ -20,23 +23,26 @@ get_action = logic.get_action
 
 log = logging.getLogger('ckanext')
 
-# TODO from cfg
-url = "http://192.168.128.23/dump"
+rdf_uri_template = config.get("odn.storage.rdf.uri.template", None)
+file_uri_template = config.get("odn.storage.file.uri.template", None)
 
 
 def get(data_dict):
-    if 'pipelineId' not in data_dict:
-        raise NotFound('pipelineId not provided.')
+    check_and_bust('pipelineId', data_dict)
+   
+    check_and_bust('resources', data_dict)
     
-    if 'rdf' not in data_dict:
-        raise NotFound('File containing resource information not provided.')
-    
-    return data_dict['pipelineId'], data_dict['rdf'].file
+    return data_dict['pipelineId'], data_dict['resources']
 
 
 def resources_auth(context, data_dict=None):
     """Authentication for resources function
     """
+#     model = context['model']
+#     user = context['user']
+#     authorized = new_authz.is_sysadmin(user)
+#     
+#     return {'success' : authorized}
 
     return {'success' : True}
 
@@ -57,6 +63,7 @@ def set_user(context, user_id):
         context['user'] = user.name
 
 
+# @plugins.toolkit.side_effect_free
 def resources(context, data_dict=None):
     """Resources
 
@@ -66,17 +73,13 @@ def resources(context, data_dict=None):
     :rtype: list of dictionaries describing the success / failure of updating or creating the resource
 
     """
+    
+    if not rdf_uri_template or not file_uri_template:
+        raise NotFound('Config properties not set. Please contact the administrator.')
+    
     log.debug("data_dict = {0}".format(data_dict))
-    pipeline_id, rdf_file = get(data_dict)
+    pipeline_id, resources = get(data_dict)
     
-    resources, msg = get_resources(rdf_file)
-    
-    if not resources:
-        if msg:
-            raise NotFound("No resources information found: {0}".format(msg))
-        else:
-            raise NotFound("No resources information found.")
-        
     model = context['model']
     dataset_to_pipeline = Pipelines.by_pipeline_id(pipeline_id)
     
@@ -99,15 +102,25 @@ def resources(context, data_dict=None):
     
     responses = []
     for resource in resources:
-        resource.pop('uri')
-        name = resource['name']
-        package_resource = get_resource_by_name(name, package_resources)
-        
         success = False
         type = "CREATE"
         message = None
+        name = None
         
         try:
+            check_and_bust('storageId', resource)
+            check_and_bust('resource', resource)
+            
+            storage_id = resource['storageId']
+            resource = resource['resource']
+            
+            check_and_bust('name', resource)
+            name = resource['name']
+            
+            package_resource = get_resource_by_name(name, package_resources)
+            url = get_url(storage_id)
+            
+            resource['url'] = url
             if package_resource:
                 # resource with the name exists -> just UPDATE
                 type = "UPDATE"
@@ -131,26 +144,34 @@ def resources(context, data_dict=None):
     return responses
 
 
-def get_resources(rdf_file):
-    from ckanext.dcat.parsers import RDFParser, RDFParserException
-    parser = RDFParser()
-    
-    # Parsing a local RDF/XML file
-    
-    in_out_format = 'turtle'
+def check_and_bust(key, dict):
+    if key not in dict or not dict[key]:
+        json_str = json.dumps(dict) # we don't want to quote
+        raise NotFound("Key '{0}' was not found in: {1}".format(key, json_str))
 
-    try:
-        parser.parse(rdf_file.read(), _format=in_out_format)
+
+def get_url(resource):
+    check_and_bust('type', resource)
+    check_and_bust('value', resource)
     
-        for dataset in parser.datasets():
-            return dataset['resources'], None
+    type = resource['type']
+    value = resource['value']
     
-    except RDFParserException, e:
-        log.error('Error parsing the RDF file: {0}'.format(e))
-        return None, str(e)
-    except Exception, e:
-        log.exception(e)
-        None, str(e)
+    url = ""
+    if type == "RDF":
+        url = rdf_uri_template
+    elif type == "FILE":
+        url = file_uri_template
+    
+    # escaping 'wrong' characters
+    url = url.replace('{storage_id}', str(10))
+    return urllib.quote(url, safe="%/:=&?~#+!$,;'@()*[]")
+        
+
+def to_timestamp_naive(datetime_str):
+    datetime = parse(datetime_str)
+    naive = datetime.replace(tzinfo=None) - datetime.utcoffset()
+    return naive.isoformat(' ')
 
 
 def resource_create(dataset_id, resource, context):
