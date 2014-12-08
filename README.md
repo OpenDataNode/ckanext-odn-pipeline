@@ -134,7 +134,7 @@ Content-Type: application/json
 ```
 
 Error response:
-```
+```JSON
 HTTP 404 Not found
 Content-Type: application/json
 
