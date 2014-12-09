@@ -37,7 +37,7 @@ odn.uv.url = http://HOST/unifiedviews
 odn.uv.api.url = http://127.0.0.1:8080/master/api/1
 odn.uv.timeout = 5
 
-# resource update api (L-Catalog <-> IC)
+# resource update api (L-Catalog <-> IC), the URL are quoted in code
 odn.storage.rdf.uri.template = http://host/sparql?query=select {?s ?p ?o} from {storage_id}
 odn.storage.file.uri.template = http://host/dump/{storage_id}
 ```
@@ -107,6 +107,8 @@ All keys in this request are mandatory. The only exception to this is the resour
 where only 'name' key is mandatory. The name key is used as resource identification. It
 is used to determine if the resource should be created or updated. The resource value
 corresponds to standard CKAN resource_update / resource_create api call.
+
+storageId type: RDF / FILE
 
 Response:
 ```JSON

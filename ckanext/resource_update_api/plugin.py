@@ -6,7 +6,7 @@ Created on 26.11.2014
 
 import ckan.logic as logic
 import ckan.plugins as plugins
-import ckan.new_authz as new_authz
+# import ckan.new_authz as new_authz
 import logging
 import pylons.config as config
 import urllib
@@ -17,6 +17,7 @@ from dateutil.parser import parse
 from ckanext.model.pipelines import Pipelines 
 from ckan.common import _, c
 from ckan.model.user import User
+from ckan.logic import ValidationError
 
 NotFound = logic.NotFound
 get_action = logic.get_action
@@ -69,6 +70,8 @@ def resources(context, data_dict=None):
 
     :param pipelineId: id of pipeline the resource belongs to
     :type pipelineId: int
+    :param resources: resources to create or update
+    :type resources: list of dictionaries
     
     :rtype: list of dictionaries describing the success / failure of updating or creating the resource
 
@@ -162,9 +165,12 @@ def get_url(resource):
         url = rdf_uri_template
     elif type == "FILE":
         url = file_uri_template
+    else:
+        msg = "Wrong storageId type given '{type}', only RDF or FILE supported."
+        raise ValidationError(msg.format(type=type))
     
     # escaping 'wrong' characters
-    url = url.replace('{storage_id}', str(10))
+    url = url.replace('{storage_id}', str(value))
     return urllib.quote(url, safe="%/:=&?~#+!$,;'@()*[]")
         
 
