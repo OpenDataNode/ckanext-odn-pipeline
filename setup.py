@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '0.1.0-SNAPSHOT'
+version = '0.2.0-SNAPSHOT'
 
 setup(
     name='ckanext-odn-pipeline',
@@ -18,8 +18,12 @@ setup(
     uv_url='',
     license='',
     packages=find_packages(exclude=['examples', 'tests']),
-    namespace_packages=['ckanext', 'ckanext.pipeline', 'ckanext.model',\
-                        'ckanext.commands', 'ckanext.controllers'],
+    namespace_packages=['ckanext',
+                        'ckanext.pipeline',
+                        'ckanext.model',
+                        'ckanext.commands',
+                        'ckanext.controllers',
+                        'ckanext.resource_update_api'],
     package_data={'': [
                        'fanstatic/*.css',\
                        'fanstatic/*.js',\
@@ -34,6 +38,7 @@ setup(
     """
     [ckan.plugins]
     odn_pipeline=ckanext.pipeline.plugin:PipelinePlugin
+    odn_resource_update_api=ckanext.resource_update_api.plugin:ResourceUpdateAPIPlugin
     [paste.paster_command]
     pipeline-cmd = ckanext.commands.pipeline_cmd:PipelineCmd
     """,
