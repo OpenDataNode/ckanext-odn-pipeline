@@ -27,7 +27,7 @@ From the extension folder start the installation: ``` python setup.py install ``
 Add extension to ckan config: /etc/ckan/default/production.ini
 
 ```
-ckan.plugins = odn_pipeline resource-update-api
+ckan.plugins = odn_pipeline odn_resource_update_api
 ```
 
 to section [app:main] add:

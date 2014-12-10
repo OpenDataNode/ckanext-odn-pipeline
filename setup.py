@@ -38,7 +38,7 @@ setup(
     """
     [ckan.plugins]
     odn_pipeline=ckanext.pipeline.plugin:PipelinePlugin
-    resource-update-api=ckanext.resource_update_api.plugin:ResourceUpdateAPIPlugin
+    odn_resource_update_api=ckanext.resource_update_api.plugin:ResourceUpdateAPIPlugin
     [paste.paster_command]
     pipeline-cmd = ckanext.commands.pipeline_cmd:PipelineCmd
     """,
