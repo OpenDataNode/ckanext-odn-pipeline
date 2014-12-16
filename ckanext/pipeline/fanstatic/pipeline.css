@@ -1,0 +1,33 @@
+.filter-label {
+	display: inline;
+}
+
+.pipeline-select {
+	width: 500px;
+}
+
+.pipeline-description {
+    background-color: #ffffff;
+    padding: 10px 10px;
+    width: 500px;
+    height: 200px;
+    overflow: auto;
+}
+
+div.hidden {
+	display: none;
+}
+
+.dataset-item {
+	position: relative;
+}
+
+.dataset-content .btn-group {
+	position: absolute;
+	top: -5px;
+	right: 10px;
+}
+
+div.error {
+	color: red;
+}

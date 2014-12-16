@@ -1,0 +1,84 @@
+{% extends 'package/edit_base.html' %}
+
+{% block subtitle %}{{ _('Pipelines') }} - {{ h.dataset_display_name(pkg) }}{% endblock %}
+
+{% set controller = 'ckanext.controllers.pipeline:ICController' %}
+
+{% block styles %}
+  {{ super() }}
+  {% resource 'ic_theme/pipeline.css' %}
+{% endblock %}
+
+{% block page_primary_action %}
+  {% link_for _('Add pipeline'), controller=controller, action='choose_action', id=pkg_dict.name, class_='btn', icon='plus' %}
+{% endblock %}
+
+{% block primary_content_inner %}
+	{% set pipelines = h.get_dataset_pipelines(pkg_dict['id']) %}
+	{% if pipelines|length > 0 %}
+		<ul class="dataset-list unstyled">
+		  {% for pipe in pipelines %}
+		  <li class="dataset-item">
+		  	<div class="dataset-content">
+		  	  <h3 class="dataset-heading">
+                {{ pipe['name'] }} 
+		      </h3>
+		      <div class="dropdown btn-group">
+			    <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+			      <i class="icon-share-alt"></i>
+			      {{ _('Action') }}
+			      <span class="caret"></span>
+			    </a>
+			    <ul class="dropdown-menu">
+			      <li>
+			      	<a href="{{ uv_edit_url.format(pipe_id=pipe['id']) }}" target="_blank">
+			      	  <i class="icon-edit"></i>
+			      	  {{ _('Configure manually') }}
+			      	</a>
+			      </li>
+			      <li>
+			        <a href="{{ uv_scheduler_url }}" target="_blank">{{ _('Schedule') }}</a>
+			      </li>
+			      <li>
+			        {% link_for _('Execute now'), controller=controller, action='execute_now', id=pkg_dict.name, pipeline_id=pipe['id'] %}
+			      </li>
+			      <li>
+			      	{% link_for _('Remove'), controller=controller, action='remove_pipe', id=pkg_dict.name, pipeline_id=pipe['id'] %}
+			      </li>
+			    </ul>
+			  </div>
+			  {% if pipe['error'] %}
+			  <div class="error">Error: {{ pipe['error'] }}</div>
+			  {% endif %}
+		      <div><p>{{ pipe['description'] }}</p></div>
+		      <div>
+		        <p>
+		          {{ _("Last execution: {time}, last run status: ").format(time=pipe['last_exec'] or "N/A") }}
+		          {% if pipe['last_exec_status'] %}
+		          <a href="{{ pipe['last_exec_link'] }}" target="_blank">{{ pipe['last_exec_status'] }}</a>
+		          {% else %}
+		          N/A
+		          {% endif %}
+		        </p>
+		        <p>
+		          {{ _("Next execution: ") }}
+		          {% if pipe['next_exec'] %}
+		          <a href="{{ pipe['next_exec_sched_url'] }}" target="_blank">
+		            {{ pipe['next_exec']}}
+		            {% if pipe['next_exec_status'] %}
+		       	    {{ " ({0})".format(pipe['next_exec_status']) }}
+		            {% endif %}
+		          </a>
+		          {% else %}
+		          {{ _("Not planned") }}
+		          {% endif %}
+		        </p>
+		      </div>
+		  	</div>
+		  </li>
+		  {% endfor %}
+		</ul>
+	{% else %}
+		<p>No pipelines assigned.</p>
+	{% endif %}
+{% endblock %}

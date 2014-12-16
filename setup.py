@@ -1,15 +1,15 @@
 from setuptools import setup, find_packages
 
-version = '0.1.0-SNAPSHOT'
+version = '0.2.0-SNAPSHOT'
 
 setup(
-    name='ckanext-internal-catalog',
+    name='ckanext-odn-pipeline',
     version=version,
     description="""
-    Adding dataset_purge api action for sysadmins only
+    Extension for administration of pipelines
     """,
     long_description="""
-    Adding dataset_purge api action for sysadmins only
+    Extension for administration of UnifiedViews pipelines
     """,
     classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
     keywords='',
@@ -18,8 +18,12 @@ setup(
     uv_url='',
     license='',
     packages=find_packages(exclude=['examples', 'tests']),
-    namespace_packages=['ckanext', 'ckanext.internal_catalog', 'ckanext.model',\
-                        'ckanext.commands', 'ckanext.controllers'],
+    namespace_packages=['ckanext',
+                        'ckanext.pipeline',
+                        'ckanext.model',
+                        'ckanext.commands',
+                        'ckanext.controllers',
+                        'ckanext.resource_update_api'],
     package_data={'': [
                        'fanstatic/*.css',\
                        'fanstatic/*.js',\
@@ -29,12 +33,13 @@ setup(
                        'templates/pipeline/snippets/*.html']},
     include_package_data=True,
     zip_safe=False,
-    install_requires=['ckancommons>=0.1.0-SNAPSHOT'],
+    install_requires=[],
     entry_points=\
     """
     [ckan.plugins]
-    internal-catalog=ckanext.internal_catalog.plugin:InternalCatalog
+    odn_pipeline=ckanext.pipeline.plugin:PipelinePlugin
+    odn_resource_update_api=ckanext.resource_update_api.plugin:ResourceUpdateAPIPlugin
     [paste.paster_command]
-    internal-catalog-cmd = ckanext.commands.internal_catalog_cmd:InternalCatalogCmd
+    pipeline-cmd = ckanext.commands.pipeline_cmd:PipelineCmd
     """,
 )

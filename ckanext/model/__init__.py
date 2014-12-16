@@ -1,5 +1,1 @@
-
-# from pipelines import (
-#     Pipelines,
-#     pipelines_table
-# )
+__import__('pkg_resources').declare_namespace(__name__)
