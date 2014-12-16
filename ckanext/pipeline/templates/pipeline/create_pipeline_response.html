@@ -14,8 +14,7 @@
 
 {% block primary_content_inner %}
   {% resource 'ic_theme/pipelines.js' %}
-  {% set options, descriptions = h.get_pipes_options() %}
-  {% snippet 'pipeline/snippets/stages.html', stages=['complete', 'active'] %}
+  {% snippet 'pipeline/snippets/stages.html', stages=['complete', 'complete', 'active'], labels=['Choose action', None, 'Finish'] %}
   {% if err_msg %}
   <div class="error">{{ err_msg }}</div>
   <div class="form-actions">

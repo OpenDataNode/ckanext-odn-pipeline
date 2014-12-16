@@ -13,9 +13,13 @@
 {% block page_primary_action %}{% endblock %}
 
 {% block primary_content_inner %}
-  {% set options, descriptions = h.get_pipes_options() %}
-  {% snippet 'pipeline/snippets/stages.html', stages=['complete', 'active'] %}
-  <form method='post' class="module-content form-horizontal" action="{% url_for controller=controller, action='create_pipe_manually', id=c.pkg_dict.name %}">
+  {% if form_action == 'create_pipe_manually'%}
+    {% snippet 'pipeline/snippets/stages.html', stages=['complete', 'active'], labels=['Choose action', 'Create pipeline'] %}
+  {% else %}
+    {% snippet 'pipeline/snippets/stages.html', stages=['complete', 'complete', 'active'], labels=['Choose action', None, 'Create pipeline'] %}
+  {% endif %}
+  <form method='post' class="module-content form-horizontal" action="{% url_for controller=controller, action=form_action, id=c.pkg_dict.name %}">
+  	<input id="pipeline" name="pipeline" type="hidden" value="{{ pipeline }}"/>
   	{{ form.input('name', label=_('Name'), placeholder=_('Pipeline name'), value='', error=error, classes=[], is_required=true) }}
   	{{ form.textarea('description', id='description', value=descr, label=_('Description'), placeholder='Pipeline description', error=error) }}
     <div class="form-actions">

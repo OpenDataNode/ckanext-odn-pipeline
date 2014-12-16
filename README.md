@@ -8,6 +8,7 @@ Until now added features:
 * Adds tab 'Pipelines' to dataset management
 * Associates existing pipeline with CKAN dataset
 * Associates manually created pipeline with CKAN dataset
+* Associates modified copy of existing pipeline with CKAN dataset
 * Shows information about last and next execution
 * Links to UV functionality
 * Uses ODN/UV rest API

@@ -193,8 +193,17 @@ def add_next_exec_info(pipe_id, pipe):
         h.flash_error(error_msg)
 
 
-def get_pipes_options():
+def get_available_pipes_options():
     pipes = get_pipelines_not_assigned()
+    return get_options_discriptions_for(pipes)
+
+
+def get_all_pipes_options():
+    pipes = get_all_pipelines()
+    return get_options_discriptions_for(pipes)
+
+    
+def get_options_discriptions_for(pipes):
     options = []
     descriptions = []
     if pipes:
@@ -237,8 +246,8 @@ class PipelinePlugin(plugins.SingletonPlugin):
     # see the ITemplateHelpers plugin interface.
     def get_helpers(self):
         return {'get_pipeline_available': get_pipelines_not_assigned,
-                'get_pipes_options': get_pipes_options,
-                'get_dataset_pipelines': get_dataset_pipelines}
+                'get_dataset_pipelines': get_dataset_pipelines
+                }
     
     
     def before_map(self, route_map):
@@ -253,6 +262,11 @@ class PipelinePlugin(plugins.SingletonPlugin):
             m.connect('/dataset/{id}/pipelines/choose_action', action='choose_action')
             m.connect('/dataset/{id}/pipelines/create_new', action='create_pipe_manually', conditions=POST)
             m.connect('/dataset/{id}/pipelines/execute/{pipeline_id}', action='execute_now')
+            m.connect('pipe_to_copy', '/dataset/{id}/pipelines/choose_pipe_to_copy',
+                       action='choose_pipe_to_copy', conditions=POST)
+            m.connect('name_and_descr', '/dataset/{id}/pipelines/name_and_descr',
+                       action='set_name_descr', conditions=POST)
+            m.connect('/dataset/{id}/pipelines/response', action='create_copy')
             
         return route_map
     
