@@ -183,9 +183,6 @@ def to_timestamp_naive(datetime_str):
 def resource_create(dataset_id, resource, context):
     log.debug("Creating resource dataset_id={id}, resource={res}"\
               .format(id=dataset_id, res=resource))
-#     data_dict = {'package_id': dataset_id,
-#                  'name': name,
-#                  'url': url}
     resource['package_id'] = dataset_id
     return get_action('resource_create')(context, resource)
 

@@ -263,8 +263,7 @@ class ICController(base.BaseController):
             pipe = Pipelines(package['id'], pipeline_id).get()
             
             if not pipe:
-                h.flash_error(_("Couldn't remove pipeline, because\
-                there is no such pipeline assigned to this dataset."))
+                h.flash_error(_("Couldn't remove pipeline, because there is no such pipeline assigned to this dataset."))
                 base.redirect(h.url_for('pipe_assign', id=id))
             else:
                 pipe.delete()
