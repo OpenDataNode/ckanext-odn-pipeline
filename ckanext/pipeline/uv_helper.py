@@ -76,7 +76,14 @@ class UVRestAPIWrapper():
         uv_url = '{0}/pipelines'.format(self.url)
         data = {'name':name, 'description': description}
         return self._send_request_with_data(uv_url, json.dumps(data))
-        
+    
+    
+    def create_copy_pipeline(self, pipe_to_copy, name, description):
+        assert pipe_to_copy
+        uv_url = '{0}/pipelines/{1}/clones'.format(self.url, pipe_to_copy)
+        data = {'name':name, 'description': description}
+        return self._send_request_with_data(uv_url, json.dumps(data))
+
 
     def get_last_finished_execution(self, pipe_id):
         assert pipe_id

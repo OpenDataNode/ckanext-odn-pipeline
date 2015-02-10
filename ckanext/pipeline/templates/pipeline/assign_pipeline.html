@@ -1,4 +1,4 @@
-{% extends 'pipeline/choose_assign_action.html' %}
+{% extends 'pipeline/choose_pipeline.html' %}
 
 {% import 'macros/form.html' as form %}
 {% block styles %}
@@ -12,33 +12,3 @@
 
 {% block page_primary_action %}{% endblock %}
 
-{% block primary_content_inner %}
-	{% resource 'ic_theme/pipelines.js' %}
-	{% set options, descriptions = h.get_pipes_options() %}
-	{% snippet 'pipeline/snippets/stages.html', stages=['complete', 'active'] %}
-	<form method='post' class="module-content form-vertical" action="{% url_for controller=controller, action='assign', id=c.pkg_dict.name %}">
-		<label class="filter-label" for="filter">Select pipeline</label>
-		<input id="filter" type="text" class="pipeline-filter"/>
-		<select id="pipeline" name="pipeline" class="pipeline-select" size="5">
-	      {% for option in options %}
-	        <option value="{{ option.value }}"{% if option.value == selected %} selected{% endif %}>{{ option.text or option.value }}</option>
-	      {% endfor %}
-	    </select>
-		<label class="control-label">Selected pipeline description</label>
-		<div id="empty-descr" class="pipeline-description">
-		</div>
-		{% for descr in descriptions %}
-		<div id="{{ descr['id'] }}" class="hidden">
-			{% if descr['description'] %}
-			{{ descr['description'] }}
-			{% else %}
-			{{ _('N/A') }}
-			{% endif %}
-		</div>
-		{% endfor %}
-		<div class="form-actions">
-		  {% link_for _('Back'), controller=controller, action='choose_action', id=c.pkg_dict.name, class_='btn' %}
-		  <input type="submit" class="btn btn-primary" value="Finish" />
-		</div>
-	</form>
-{% endblock %}

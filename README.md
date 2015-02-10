@@ -8,6 +8,7 @@ Until now added features:
 * Adds tab 'Pipelines' to dataset management
 * Associates existing pipeline with CKAN dataset
 * Associates manually created pipeline with CKAN dataset
+* Associates modified copy of existing pipeline with CKAN dataset
 * Shows information about last and next execution
 * Links to UV functionality
 * Uses ODN/UV rest API
@@ -149,6 +150,28 @@ Content-Type: application/json
 	}
 }
 ```
+
+Internationalization (i18n)
+-------
+CKAN supports internationalization through babel (```pip install babel```). This tool extracts the messages from source code and html files
+and creates .pot file. Next using commands (step 2 or 3) it creates or updates .po files. The actual translation are in these .po files.
+
+1. To extract new .pot file from sources
+	```
+	python setup.py extract_messages
+	```
+	
+	This need to be done if there is no .pot file or there were some changes to messages in source code files or html files.
+
+2. To generate .po for new localization (this example uses 'sk' localization)
+	```
+	python setup.py init_catalog --locale sk
+	```
+
+3. If only updating existing .po file (e.g. new messages were extracted through step 1)
+	```
+	python setup.py update_catalog --locale sk
+	```
 
 Licenses
 -------

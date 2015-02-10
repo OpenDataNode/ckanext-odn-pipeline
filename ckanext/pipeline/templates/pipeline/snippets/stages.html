@@ -7,7 +7,7 @@ stages - A list of states for each of the three stages. Missing stages default
 
 Example:
 
-    {% snippet 'pipeline/snippets/stages.html', stages=['complete', 'active'] %}
+    {% snippet 'pipeline/snippets/stages.html', stages=['complete', 'active'], labels=['stage1', 'stage2'] %}
 
 #}
 
@@ -15,27 +15,23 @@ Example:
 
 {% set s1 = stages[0] or 'active' %}
 {% set s2 = stages[1] or 'uncomplete' %}
+{% set s3 = stages[2] or 'uncomplete' %}
 {% if s1 != 'uncomplete' %}{% set class = 'stage-1' %}{% endif %}
 {% if s2 != 'uncomplete' %}{% set class = 'stage-2' %}{% endif %}
+{% if s3 != 'uncomplete' %}{% set class = 'stage-3' %}{% endif %}
+
+{% set l1 = labels[0] or '...' %}
+{% set l2 = labels[1] or '...' %}
+{% set l3 = labels[2] or '...' %}
 
 <ol class="stages {{ class }}">
   <li class="first {{ s1 }}">
-    {% if s1 != 'complete' %}
-      <span class="highlight">{{ _('Choose action') }}</span>
-    {% else %}
-      <button class="highlight" name="save" value="go-existing-pipeline" type="submit">{{ _('Choose action') }}</button>
-    {% endif %}
+    <span class="highlight">{{ l1 }}</span>
   </li>
-  <li class="last {{ s2 }}">
-    {% if s2 != 'complete' %}
-      <span class="highlight">{{ _('Assign Pipeline') }}</span>
-    {% else %}
-      {% if s1 == 'active'%}
-        {# stage 1 #}
-        <button class="highlight" name="save" value="go-dataset" type="submit">{{ _('Assign Pipeline') }}</button>
-      {% else %}
-        {% link_for _('Assign Pipeline'), controller=controller, action='assign_pipeline', class_="highlight" %}
-      {% endif %}
-    {% endif %}
+  <li class="middle {{ s2 }}">
+  	<span class="highlight">{{ l2 }}</span>
+  </li>
+  <li class="last {{ s3 }}">
+  	<span class="highlight">{{ l3 }}</span>
   </li>
 </ol>

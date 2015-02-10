@@ -25,6 +25,7 @@ setup(
                         'ckanext.controllers',
                         'ckanext.resource_update_api'],
     package_data={'': [
+                       'i18n/*/LC_MESSAGES/*.po',
                        'fanstatic/*.css',\
                        'fanstatic/*.js',\
                        'templates/*.html',\
@@ -34,6 +35,12 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[],
+    message_extractors={
+        'ckanext': [
+            ('**.py', 'python', None),
+            ('**.html', 'ckan', None),
+        ]
+    }, # for babel.extract_messages, says which are source files for translating
     entry_points=\
     """
     [ckan.plugins]
