@@ -8,6 +8,8 @@ import ckan.logic as logic
 import ckan.plugins as plugins
 # import ckan.new_authz as new_authz
 import logging
+import ckan.lib.helpers as h
+from urlparse import urlparse
 import pylons.config as config
 import urllib
 import json
@@ -159,12 +161,14 @@ def get_url(resource):
     
     type = resource['type']
     value = resource['value']
-    
-    url = ""
+
+    url = h.url_for('/', locale='default', qualified=True)
+    host_url = urlparse(url)
     if type == "RDF":
-        url = rdf_uri_template
+        url = host_url.netloc + rdf_uri_template
+
     elif type == "FILE":
-        url = file_uri_template
+        url = host_url.netloc + file_uri_template
     else:
         msg = "Wrong storageId type given '{type}', only RDF or FILE supported."
         raise ValidationError(msg.format(type=type))
