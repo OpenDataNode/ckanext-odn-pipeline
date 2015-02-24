@@ -12,11 +12,12 @@ Until now added features:
 * Shows information about last and next execution
 * Links to UV functionality
 * Uses ODN/UV rest API
-* Adds rest API for creating / updating resources from UnifiedViews (L-Catalog dpu)
+* Adds API calls for creating / updating resources from UnifiedViews (L-Catalog DPU)
+* Adds API call internal_api for proxy-ing API calls (L-FilesToCkan and L-RdfToCkan DPUs)
 
 TODO
 -------
-
+* internal_api: authorization for user_id parameter
 
 Installation
 -------
@@ -41,6 +42,9 @@ odn.uv.timeout = 5
 # resource update api (L-Catalog <-> IC), the URL are quoted in code
 odn.storage.rdf.uri.template = http://host/sparql?query=select {?s ?p ?o} from {storage_id}
 odn.storage.file.uri.template = http://host/dump/{storage_id}
+
+# internal_api
+ckan.auth.internal_api.token = my secret token
 ```
 
 DB init
@@ -150,6 +154,29 @@ Content-Type: application/json
 	}
 }
 ```
+
+internal_api
+-------
+Functions as proxy to other CKAN API calls. Requires following properties set up in CKAN configuration file:
+* ckan.auth.internal_api.token
+* odn.storage.rdf.uri.template
+ 
+Request:
+
+* POST <host>/api/3/action/internal_api
+* multipart/form-data
+* parameters:
+	* action - name of API call, e.g. 'resource_create'
+	* pipeline_id - pipeline id used to identify the dataset the change should be applied to
+	* user_id - user used for authentication
+	* token - authentication token set up in CKAN conf file (ckan.auth.internal_api.token)
+	* data - actual JSON data of the proxied API call
+	* type - 'RDF' otherwise optional
+	* value - storage id if type == 'RDF', otherwise optional
+
+For 'package_update', 'package_show', 'resource_create' actions the pipeline_id is converted to appropriate package id. So for these
+actions its not necessary to add the ids to the data parameter and will be ignored / overwritten if given.
+
 
 Internationalization (i18n)
 -------
