@@ -43,18 +43,16 @@ def change_auth_user(context, user_id):
     context['auth_user_obj'] = ''
     if not user_id:
         return
-    
-    # TODO
-#     user = User.by_name(user_id)
+
     user = MyUser.by_id(user_id)
     if user:
         log.debug('internal_api: Setting user to {username}'.format(username=user.name))
         context['user'] = user.name
         context['auth_user_obj'] = user
+    else:
+        raise NotFound('User with given user_id does not exist.')
 
 
-# TODO remove annotation
-@plugins.toolkit.auth_allow_anonymous_access
 def internal_api_auth(context, data_dict=None):
     check_and_bust('token', data_dict)
 
@@ -68,25 +66,10 @@ def internal_api_auth(context, data_dict=None):
 
 # ============= RESOURCE CREATE logic =============
 
-def get_package_editor_or_admin(package_id, context):
-    '''
-    :return: user id with either editor or admin role on package
-    '''
-    resp = get_action('roles_show')(context, {'domain_object':package_id})
-    admin_id = None
-    for role in resp['roles']:
-        role_name = role['role']
-        user_id = role['user_id']
-        if role_name == 'editor':
-            return user_id
-        elif role_name == 'admin':
-            admin_id = user_id
-    return admin_id
-
 # data_dict = {
 #     'action':'resource_create',
 #     'pipeline_id': 11,
-#     'user_id': 'idcko',
+#     'user_id': 'CKAN USER ID',
 #     'token': 'token',
 #     'type': 'RDF otherwise optional',
 #     'value': 'storageId if value == RDF otherwise optional',
@@ -96,13 +79,11 @@ def get_package_editor_or_admin(package_id, context):
 def internal_api(context, data_dict=None):
     check_and_bust('user_id', data_dict)
     user_id = data_dict['user_id']
-    # TODO set user for auth
-    # change_auth_user(context, user_id)
+    change_auth_user(context, user_id)
     
     log.debug('internal_api: data_dict = {0}'.format(data_dict))
     logic.check_access('internal_api', context, data_dict)
     
-    change_auth_user(context, None)
 
     check_and_bust('action', data_dict)
     check_and_bust('data', data_dict)
@@ -125,10 +106,6 @@ def internal_api(context, data_dict=None):
         dataset_to_pipeline = Pipelines.by_pipeline_id(pipeline_id)
         
         if dataset_to_pipeline:
-            # user with permission to edit or admin rights on dataset
-            editor_id = get_package_editor_or_admin(dataset_to_pipeline.package_id, context)
-            change_auth_user(context, editor_id)
-        
             # converting pipeline_id to 'id' or 'package_id'
             if 'resource_create' == action:
                 data['package_id'] = dataset_to_pipeline.package_id
