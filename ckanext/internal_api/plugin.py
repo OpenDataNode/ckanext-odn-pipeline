@@ -4,7 +4,7 @@ Created on 9.2.2015
 @author: mvi
 '''
 
-from ckan.common import _
+from ckan.common import _, c
 import ckan.logic as logic
 import ckan.plugins as plugins
 from ckanext.model.pipelines import Pipelines
@@ -39,8 +39,10 @@ class MyUser(User):
         return obj.filter_by(id=id).first()
 
 def change_auth_user(context, user_id):
-    context['user'] = ''
-    context['auth_user_obj'] = ''
+    context['user'] = None
+    context['auth_user_obj'] = None
+    c.user = None
+    c.userobj = None
     if not user_id:
         return
 
@@ -49,6 +51,8 @@ def change_auth_user(context, user_id):
         log.debug('internal_api: Setting user to {username}'.format(username=user.name))
         context['user'] = user.name
         context['auth_user_obj'] = user
+        c.user = user.name
+        c.userobj = user
     else:
         raise NotFound('User with given user_id does not exist.')
 
@@ -78,15 +82,16 @@ def internal_api_auth(context, data_dict=None):
 
 def internal_api(context, data_dict=None):
     check_and_bust('user_id', data_dict)
+    check_and_bust('action', data_dict)
+    check_and_bust('data', data_dict)
+    
     user_id = data_dict['user_id']
     change_auth_user(context, user_id)
     
-    log.debug('internal_api: data_dict = {0}'.format(data_dict))
+    log.debug('internal_api: action = {0}'.format(data_dict['action']))
+    log.debug('internal_api: user_id = {0}'.format(data_dict['user_id']))
     logic.check_access('internal_api', context, data_dict)
-    
 
-    check_and_bust('action', data_dict)
-    check_and_bust('data', data_dict)
     action = data_dict['action'] 
     data = data_dict['data']
     
@@ -102,6 +107,7 @@ def internal_api(context, data_dict=None):
     # any type
     
     if data_dict.has_key('pipeline_id') and data_dict['pipeline_id']:
+        log.debug('internal_api: pipeline_id = {0}'.format(data_dict['pipeline_id']))
         pipeline_id = data_dict['pipeline_id']
         dataset_to_pipeline = Pipelines.by_pipeline_id(pipeline_id)
         

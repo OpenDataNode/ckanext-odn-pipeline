@@ -61,9 +61,16 @@ class MyUser(User):
 
 # TODO !!! REMOVE !!!
 def set_user(context, user_id):
+    context['user'] = None
+    context['auth_user_obj'] = None
+    c.user = None
+    c.userobj = None
     user = MyUser.by_id(user_id)
     if user:
         context['user'] = user.name
+        context['auth_user_obj'] = user
+        c.user = user.name
+        c.userobj = user
 
 
 # @plugins.toolkit.side_effect_free
