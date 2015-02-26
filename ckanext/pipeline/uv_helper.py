@@ -61,8 +61,10 @@ class UVRestAPIWrapper():
         return response_dict
     
     
-    def get_pipelines(self):
+    def get_pipelines(self, org=None):
         uv_url = '{0}/pipelines'.format(self.url)
+        if org:
+            uv_url = '{0}?organizationExternalId={1}'.format(uv_url, org)
         return self._send_request(uv_url)
     
     

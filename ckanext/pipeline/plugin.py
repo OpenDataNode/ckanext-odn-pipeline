@@ -13,7 +13,7 @@ import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 import ckan.lib.helpers as h
 
-from ckan.common import _
+from ckan.common import _, c
 from ckanext.pipeline.uv_helper import UVRestAPIWrapper
 from ckanext.model.pipelines import Pipelines
 import urllib2
@@ -48,8 +48,18 @@ STATUSES = {
 def get_all_pipelines():
     assert uv_api_url
     try:
+        
+        if c.pkg.owner_org:
+            org_id = c.pkg.owner_org
+        else:
+            # raise error
+            err_msg = _('Error: Organization is not set for dataset {dataset_name}').format(dataset_name=c.pkg.name)
+            log.error(err_msg)
+            h.flash_error(err_msg)
+            return []            
+        
         uv_api = UVRestAPIWrapper(uv_api_url)
-        pipes = uv_api.get_pipelines()
+        pipes = uv_api.get_pipelines(org=org_id)
         return pipes
     except Exception, e:
         h.flash_error(_("Couldn't get pipelines, probably UnifiedViews is not responding."))
