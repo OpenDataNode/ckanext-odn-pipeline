@@ -7,6 +7,7 @@ Created on 5.11.2014
 import socket
 
 import pylons.config as config
+from paste.deploy.converters import asbool
 
 import routes.mapper
 import ckan.plugins as plugins
@@ -24,6 +25,7 @@ POST = dict(method=['POST'])
 
 uv_url = config.get('odn.uv.url', None)
 uv_api_url = config.get('odn.uv.api.url', None)
+pipeline_allow_create = asbool(config.get('odn.uv.pipeline.allow.create', True))
 
 import logging
 log = logging.getLogger('ckanext')
@@ -43,6 +45,10 @@ STATUSES = {
     None: None,
     "": None
 }
+
+
+def allows_create_pipe():
+    return pipeline_allow_create
 
 # Our custom template helper function.
 def get_all_pipelines():
@@ -256,7 +262,8 @@ class PipelinePlugin(plugins.SingletonPlugin):
     # see the ITemplateHelpers plugin interface.
     def get_helpers(self):
         return {'get_pipeline_available': get_pipelines_not_assigned,
-                'get_dataset_pipelines': get_dataset_pipelines
+                'get_dataset_pipelines': get_dataset_pipelines,
+                'allows_create_pipe': allows_create_pipe
                 }
     
     

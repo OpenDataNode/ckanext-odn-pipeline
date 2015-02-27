@@ -39,6 +39,9 @@ odn.uv.url = http://HOST/unifiedviews
 odn.uv.api.url = http://127.0.0.1:8080/master/api/1
 odn.uv.timeout = 5
 
+# allow create pipelines from CKAN gui, default True (optional)
+odn.uv.pipeline.allow.create = False
+
 # resource update api (L-Catalog <-> IC), the URL are quoted in code
 odn.storage.rdf.uri.template = http://host/sparql?query=select {?s ?p ?o} from {storage_id}
 odn.storage.file.uri.template = http://host/dump/{storage_id}
