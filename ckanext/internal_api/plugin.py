@@ -86,7 +86,7 @@ def internal_api(context, data_dict=None):
     change_auth_user(context, user_id)
     
     log.debug('internal_api: action = {0}'.format(data_dict['action']))
-    log.debug('internal_api: user_id = {0}'.format(data_dict['user_id']))
+    log.debug('internal_api: user_id = {0}'.format(user_id))
     logic.check_access('internal_api', context, data_dict)
 
     action = data_dict['action'] 
