@@ -170,15 +170,15 @@ Request:
 * multipart/form-data
 * parameters:
 	* action - name of API call, e.g. 'resource_create'
-	* pipeline_id - pipeline id used to identify the dataset the change should be applied to
-	* user_id - user used for authentication (CKAN user id)
+	* pipeline_id - pipeline id used to identify the dataset the change should be applied to (optional)
+	* user_id - user used for authentication (CKAN user id) (optional)
 	* token - authentication token set up in CKAN conf file (ckan.auth.internal_api.token)
-	* data - actual JSON data of the proxied API call
+	* data - actual JSON data of the proxied API call (optional)
 	* type - 'RDF' otherwise optional
 	* value - storage id if type == 'RDF', otherwise optional
 
 For 'package_update', 'package_show', 'resource_create' actions the pipeline_id is converted to appropriate package id. So for these
-actions its not necessary to add the ids to the data parameter and will be ignored / overwritten if given.
+actions its not necessary to add the ids to the data parameter and will be overwritten if both are given.
 
 
 Internationalization (i18n)

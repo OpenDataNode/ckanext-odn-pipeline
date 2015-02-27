@@ -39,12 +39,13 @@ class MyUser(User):
         return obj.filter_by(id=id).first()
 
 def change_auth_user(context, user_id):
+    if not user_id:
+        return
+    
     context['user'] = None
     context['auth_user_obj'] = None
     c.user = None
     c.userobj = None
-    if not user_id:
-        return
 
     user = MyUser.by_id(user_id)
     if user:
@@ -53,10 +54,8 @@ def change_auth_user(context, user_id):
         context['auth_user_obj'] = user
         c.user = user.name
         c.userobj = user
-    else:
-        raise NotFound('User with given user_id does not exist.')
 
-
+@plugins.toolkit.auth_allow_anonymous_access
 def internal_api_auth(context, data_dict=None):
     check_and_bust('token', data_dict)
 
@@ -72,20 +71,18 @@ def internal_api_auth(context, data_dict=None):
 
 # data_dict = {
 #     'action':'resource_create',
-#     'pipeline_id': 11,
-#     'user_id': 'CKAN USER ID',
+#     'pipeline_id': 11,                     (optional)
+#     'user_id': 'CKAN USER ID',             (optional)
 #     'token': 'token',
-#     'type': 'RDF otherwise optional',
-#     'value': 'storageId if value == RDF otherwise optional',
-#     'data': {}
+#     'type': 'RDF',                         (optional)
+#     'value': 'specific value for type',    (optional)
+#     'data': {}                             (optional)
 # }
 
 def internal_api(context, data_dict=None):
-    check_and_bust('user_id', data_dict)
     check_and_bust('action', data_dict)
-    check_and_bust('data', data_dict)
     
-    user_id = data_dict['user_id']
+    user_id = data_dict.get('user_id', None)
     change_auth_user(context, user_id)
     
     log.debug('internal_api: action = {0}'.format(data_dict['action']))
@@ -93,7 +90,7 @@ def internal_api(context, data_dict=None):
     logic.check_access('internal_api', context, data_dict)
 
     action = data_dict['action'] 
-    data = data_dict['data']
+    data = data_dict.get('data', {})
     
     if isinstance(data, basestring):
         # if upload data is actually a string
