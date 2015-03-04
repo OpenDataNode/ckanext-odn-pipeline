@@ -20,6 +20,7 @@ NotFound = logic.NotFound
 get_action = logic.get_action
 
 rdf_uri_template = config.get('odn.storage.rdf.uri.template', '')
+token_from_cfg = config.get("ckan.auth.internal_api.token", None)
 
 log = logging.getLogger('ckanext')
 
@@ -55,13 +56,11 @@ def change_auth_user(context, user_id):
         c.user = user.name
         c.userobj = user
 
-@plugins.toolkit.auth_allow_anonymous_access
 def internal_api_auth(context, data_dict=None):
     check_and_bust('token', data_dict)
 
     token = data_dict['token']
-    token_from_cfg = config.get("ckan.auth.internal_api.token", None)
-     
+    
     if not token or token != token_from_cfg:
         return {'success': False, 'msg': _('internal api: Authentication failed.')}
     
@@ -81,6 +80,7 @@ def internal_api_auth(context, data_dict=None):
 
 def internal_api(context, data_dict=None):
     check_and_bust('action', data_dict)
+    check_and_bust('user_id', data_dict)
     
     user_id = data_dict.get('user_id', None)
     change_auth_user(context, user_id)
