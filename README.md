@@ -17,7 +17,6 @@ Until now added features:
 
 TODO
 -------
-* internal_api: authorization for user_id parameter
 
 Installation
 -------
@@ -171,7 +170,7 @@ Request:
 * parameters:
 	* action - name of API call, e.g. 'resource_create'
 	* pipeline_id - pipeline id used to identify the dataset the change should be applied to (optional)
-	* user_id - user used for authentication (CKAN user id) (optional)
+	* user_id - user used for authentication (CKAN user id)
 	* token - authentication token set up in CKAN conf file (ckan.auth.internal_api.token)
 	* data - actual JSON data of the proxied API call (optional)
 	* type - 'RDF' otherwise optional
