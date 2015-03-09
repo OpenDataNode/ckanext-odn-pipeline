@@ -14,7 +14,7 @@ import logging
 import pylons.config as config
 
 from ckan.model.user import User
-import ast
+import json
 
 NotFound = logic.NotFound
 get_action = logic.get_action
@@ -94,7 +94,7 @@ def internal_api(context, data_dict=None):
     
     if isinstance(data, basestring):
         # if upload data is actually a string
-        data = ast.literal_eval(data)
+        data = json.loads(data)
     
     # type == 'FILE'
     
