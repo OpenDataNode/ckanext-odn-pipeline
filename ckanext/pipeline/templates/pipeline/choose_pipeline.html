@@ -16,14 +16,14 @@
 	{% resource 'ic_theme/pipelines.js' %}
 	{% snippet 'pipeline/snippets/stages.html', stages=['complete', 'active'], labels=['Choose action', 'Choose pipeline'] %}
 	<form method='post' class="module-content form-vertical" action="{% url_for controller=controller, action=form_action, id=c.pkg_dict.name %}">
-		<label class="filter-label" for="filter">Select pipeline</label>
+		<label class="filter-label" for="filter">{{ _('Select pipeline') }}</label>
 		<input id="filter" type="text" class="pipeline-filter"/>
 		<select id="pipeline" name="pipeline" class="pipeline-select" size="5">
 	      {% for option in options %}
 	        <option value="{{ option.value }}"{% if option.value == selected %} selected{% endif %}>{{ option.text or option.value }}</option>
 	      {% endfor %}
 	    </select>
-		<label class="control-label">Selected pipeline description</label>
+		<label class="control-label">{{ _('Selected pipeline description') }}</label>
 		<div id="empty-descr" class="pipeline-description">
 		</div>
 		{% for descr in descriptions %}
