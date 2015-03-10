@@ -14,7 +14,7 @@
 
 {% block primary_content_inner %}
 	{% resource 'ic_theme/pipelines.js' %}
-	{% snippet 'pipeline/snippets/stages.html', stages=['complete', 'active'], labels=['Choose action', 'Choose pipeline'] %}
+	{% snippet 'pipeline/snippets/stages.html', stages=['complete', 'active'], labels=[_('Choose action'), _('Choose pipeline')] %}
 	<form method='post' class="module-content form-vertical" action="{% url_for controller=controller, action=form_action, id=c.pkg_dict.name %}">
 		<label class="filter-label" for="filter">{{ _('Select pipeline') }}</label>
 		<input id="filter" type="text" class="pipeline-filter"/>
