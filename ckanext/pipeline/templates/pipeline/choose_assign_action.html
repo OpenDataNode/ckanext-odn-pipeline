@@ -27,7 +27,7 @@
           </label>
           <div class="form-actions">
           	{% link_for _('Back'), controller=controller, action='show', id=c.pkg_dict.name, class_='btn' %}
-			<input type="submit" class="btn btn-primary" value="Next step" />
+			<input type="submit" class="btn btn-primary" value="{{ _('Next step') }}" />
 		  </div>
         </form>
       {% endblock %}
