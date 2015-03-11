@@ -45,13 +45,17 @@ class UVRestAPIWrapper():
         return response_dict
 
 
-    def _send_request_with_data(self, uv_url, data_string):
+    def _send_request_with_data(self, uv_url, data_string, is_put=False):
         """Sends POST request with JSON data
         """
         print data_string
         assert uv_url
         headers = {'content-type': 'application/json'}
-        response = requests.post(uv_url, data=data_string, headers=headers)
+        
+        if is_put:
+            response = requests.put(uv_url, data=data_string, headers=headers)
+        else:
+            response = requests.post(uv_url, data=data_string, headers=headers)
         if response.status_code != 200:
             raise Exception("Error sending request to {0}: {1}".format(uv_url, response.text))
         response_dict = response.json()

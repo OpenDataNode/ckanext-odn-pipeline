@@ -38,7 +38,7 @@ log = logging.getLogger('ckanext')
 
 def disable_schedules_for_pipe(pipe_id):
     try:
-        uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
+        uv_api = UVRestAPIWrapper(uv_api_url)
         schedules = uv_api.get_all_schedules(pipe_id)
         for schedule in schedules:
             log.debug("disabling schedule: {0}".format(schedule))
