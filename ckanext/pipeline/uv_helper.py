@@ -8,14 +8,11 @@ import logging
 
 import json
 import requests
-import urllib
 import urllib2
 import pylons.config as config
 
 # doc https://team.eea.sk/wiki/pages/viewpage.action?pageId=108660564
-# TODO /pipelines/<pipeline_id>/schedules/
-# TODO /pipelines/<pipeline_id>/schedules/<id>
-# TODO /pipelines/<pipeline_id>/schedules/<schedule_id>
+# TODO GET /pipelines/<pipeline_id>/schedules/<id>
 # TODO GET /pipelines/<pipeline_id>/executions
 # TODO /pipelines/<pipeline_id>/executions/<execution_id>
 # TODO /pipelines/<pipeline_id>/executions
@@ -126,3 +123,23 @@ class UVRestAPIWrapper():
         data = {'debugging':is_debugging}
         return self._send_request_with_data(uv_url, json.dumps(data))
 
+
+    def get_all_schedules(self, pipe_id):
+        """ Gets all schedules for selected pipeline
+        
+        :param pipe_id: pipeline id
+        :type pipe_id: interger
+        
+        :return: list of dictionaries
+        """
+        assert pipe_id
+        uv_url = '{0}/pipelines/{1}/schedules'.format(self.url, pipe_id)
+        return self._send_request(uv_url)
+    
+
+    def edit_pipe_schedule(self, pipe_id, schedule):
+        assert schedule
+        schedule_id = schedule['id']
+        uv_url = '{0}/pipelines/{1}/schedules/{2}' \
+                    .format(self.url, pipe_id, schedule_id)
+        return self._send_request_with_data(uv_url, json.dumps(schedule), is_put=True)
