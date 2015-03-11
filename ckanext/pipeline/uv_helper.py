@@ -48,7 +48,6 @@ class UVRestAPIWrapper():
     def _send_request_with_data(self, uv_url, data_string, is_put=False):
         """Sends POST request with JSON data
         """
-        print data_string
         assert uv_url
         headers = {'content-type': 'application/json'}
         
