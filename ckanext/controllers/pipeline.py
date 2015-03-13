@@ -42,7 +42,8 @@ def disable_schedules_for_pipe(pipe_id):
         uv_api = UVRestAPIWrapper(uv_api_url)
         schedules = uv_api.get_all_schedules(pipe_id)
         for schedule in schedules:
-            log.debug("disabling schedule: {0}".format(schedule))
+            if not schedule.get('enabled', True):
+                continue # already disabled
             schedule['enabled'] = False
             uv_api.edit_pipe_schedule(pipe_id, schedule)
     except Exception, e:
