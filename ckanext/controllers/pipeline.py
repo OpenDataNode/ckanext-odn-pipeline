@@ -23,6 +23,7 @@ import pylons.config as config
 
 uv_url = config.get('odn.uv.url', None)
 uv_api_url = config.get('odn.uv.api.url', None)
+uv_api_auth = '{0}:{1}'.format(config.get('odn.uv.api.auth.username', ''), config.get('odn.uv.api.auth.password', ''))
 
 NotFound = logic.NotFound
 NotAuthorized = logic.NotAuthorized
@@ -174,8 +175,14 @@ class ICController(base.BaseController):
             package = get_action('package_show')(context, data_dict)
 
             # creating new Pipe in UV
-            uv_api = UVRestAPIWrapper(uv_api_url)
-            new_pipe = uv_api.create_copy_pipeline(pipe_to_copy, name, description)
+            uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
+            
+            org_id = package.get('owner_org', None)
+            user_id = None
+            if c.userobj:
+                user_id = c.userobj.id 
+            
+            new_pipe = uv_api.create_copy_pipeline(pipe_to_copy, name, description, user_id, org_id)
             
             # associate it with dataset
             if not new_pipe:
@@ -309,8 +316,14 @@ class ICController(base.BaseController):
             package = get_action('package_show')(context, data_dict)
 
             # creating new Pipe in UV
-            uv_api = UVRestAPIWrapper(uv_api_url)
-            new_pipe = uv_api.create_pipeline(name, description)
+            uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
+            
+            org_id = package.get('owner_org', None)
+            user_id = None
+            if c.userobj:
+                user_id = c.userobj.id 
+            
+            new_pipe = uv_api.create_pipeline(name, description, user_id, org_id)
             
             # associate it with dataset
             if not new_pipe:
@@ -345,8 +358,18 @@ class ICController(base.BaseController):
         
         err_msg = None
         try:
-            uv_api = UVRestAPIWrapper(uv_api_url)
-            execution = uv_api.execute_now(pipeline_id)
+            uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
+            
+            # get dataset org id
+            self._load(id)
+            org_id = c.pkg_dict.get('owner_org', None)
+            
+            # get id of logged user
+            user_id = None
+            if c.userobj:
+                user_id = c.userobj.id 
+            
+            execution = uv_api.execute_now(pipeline_id, user_id=user_id, org_id=org_id)
             log.debug("started execution: {0}".format(execution))
         except Exception, e:
             err_msg = _("Couldn't execute pipeline, probably UnifiedViews is not responding.")

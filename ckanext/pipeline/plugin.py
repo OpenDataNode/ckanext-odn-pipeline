@@ -25,6 +25,7 @@ POST = dict(method=['POST'])
 
 uv_url = config.get('odn.uv.url', None)
 uv_api_url = config.get('odn.uv.api.url', None)
+uv_api_auth = '{0}:{1}'.format(config.get('odn.uv.api.auth.username', ''), config.get('odn.uv.api.auth.password', '')) 
 pipeline_allow_create = asbool(config.get('odn.uv.pipeline.allow.create', True))
 
 import logging
@@ -54,7 +55,6 @@ def allows_create_pipe():
 def get_all_pipelines():
     assert uv_api_url
     try:
-        
         if c.pkg.owner_org:
             org_id = c.pkg.owner_org
         else:
@@ -64,7 +64,7 @@ def get_all_pipelines():
             h.flash_error(err_msg)
             return []            
         
-        uv_api = UVRestAPIWrapper(uv_api_url)
+        uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
         pipes = uv_api.get_pipelines(org=org_id)
         return pipes
     except Exception, e:
@@ -79,7 +79,7 @@ def get_all_pipelines():
 def get_pipeline(pipe_id):
     assert uv_api_url
     try:
-        uv_api = UVRestAPIWrapper(uv_api_url)
+        uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
         pipe = uv_api.get_pipeline_by_id(pipe_id)
         return pipe, None
     except urllib2.HTTPError, e:
@@ -163,7 +163,7 @@ def add_last_exec_info(pipe_id, pipe):
     
     error_msg = None
     try:
-        uv_api = UVRestAPIWrapper(uv_api_url)
+        uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
         last_exec = uv_api.get_last_finished_execution(pipe_id)
         
         if not last_exec:
@@ -192,7 +192,7 @@ def add_next_exec_info(pipe_id, pipe):
     
     error_msg = None
     try:
-        uv_api = UVRestAPIWrapper(uv_api_url)
+        uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
         schedule_id, next_exec, next_exec_status = uv_api.get_next_execution_info(pipe_id)
         
         pipe['next_exec'] = format_date(next_exec)
