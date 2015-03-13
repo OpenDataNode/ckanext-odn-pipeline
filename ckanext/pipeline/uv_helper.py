@@ -13,6 +13,7 @@ import pylons.config as config
 import base64
 
 # doc https://team.eea.sk/wiki/pages/viewpage.action?pageId=108660564
+# TODO POST /pipelines/<pipeline_id>/schedules
 # TODO GET /pipelines/<pipeline_id>/schedules/<id>
 # TODO GET /pipelines/<pipeline_id>/executions
 # TODO /pipelines/<pipeline_id>/executions/<execution_id>
@@ -21,8 +22,10 @@ import base64
 
 # TODO this class to ckancommons
 
-TIMEOUT =  int(config.get('odn.uv.timeout', 5))
-AUTH_HEADER_FIELD_NAME = 'Authorization'
+TIMEOUT =  int(config.get(u'odn.uv.timeout', 5))
+AUTH_HEADER_FIELD_NAME = u'Authorization'
+USER_EXT_ID = u'userExternalId'
+ORG_EXT_ID = u'organizationExternalId'
 
 log = logging.getLogger('ckanext')
 
@@ -74,7 +77,7 @@ class UVRestAPIWrapper():
     def get_pipelines(self, org=None):
         uv_url = '{0}/pipelines'.format(self.url)
         if org:
-            uv_url = '{0}?organizationExternalId={1}'.format(uv_url, org)
+            uv_url = '{0}?{1}={2}'.format(uv_url, ORG_EXT_ID, org)
         return self._send_request(uv_url)
     
     
@@ -89,8 +92,8 @@ class UVRestAPIWrapper():
         data = {
                 'name':name,
                 'description': description,
-                'userExternalId': user_id,
-                'organizationExternalId': org_id
+                USER_EXT_ID: user_id,
+                ORG_EXT_ID: org_id
         }
         return self._send_request_with_data(uv_url, json.dumps(data))
     
@@ -101,8 +104,8 @@ class UVRestAPIWrapper():
         data = {
                 'name':name,
                 'description': description,
-                'userExternalId': user_id,
-                'organizationExternalId': org_id
+                USER_EXT_ID: user_id,
+                ORG_EXT_ID: org_id
         }
         return self._send_request_with_data(uv_url, json.dumps(data))
 
@@ -147,8 +150,8 @@ class UVRestAPIWrapper():
         uv_url = '{0}/pipelines/{1}/executions/'.format(self.url, pipe_id)
         data = {
                 'debugging':is_debugging,
-                'userExternalId': user_id,
-                'organizationExternalId': org_id
+                USER_EXT_ID: user_id,
+                ORG_EXT_ID: org_id
         }
         return self._send_request_with_data(uv_url, json.dumps(data))
 
