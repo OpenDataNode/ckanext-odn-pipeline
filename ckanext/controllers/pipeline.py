@@ -37,6 +37,20 @@ get_action = logic.get_action
 log = logging.getLogger('ckanext')
 
 
+def disable_schedules_for_pipe(pipe_id):
+    try:
+        uv_api = UVRestAPIWrapper(uv_api_url)
+        schedules = uv_api.get_all_schedules(pipe_id)
+        for schedule in schedules:
+            log.debug("disabling schedule: {0}".format(schedule))
+            schedule['enabled'] = False
+            uv_api.edit_pipe_schedule(pipe_id, schedule)
+    except Exception, e:
+        log.error('Failed to disable schedules for pipeline id {0}: {1}'.format(pipe_id, str(e)))
+    except socket.timeout, e:
+        log.error('Timeout: Failed to disable schedules for pipeline id {0}: {1}'.format(pipe_id, str(e)))
+
+
 class ICController(base.BaseController):
 
     
@@ -273,9 +287,12 @@ class ICController(base.BaseController):
                 h.flash_error(_("Couldn't remove pipeline, because there is no such pipeline assigned to this dataset."))
                 base.redirect(h.url_for('pipe_assign', id=id))
             else:
+                pipe_id = pipe.pipeline_id
                 pipe.delete()
                 pipe.commit()
                 h.flash_success(_('Pipeline removed from dataset successfully'))
+                
+                disable_schedules_for_pipe(pipe_id)
         except NotFound:
             abort(404, _('Dataset not found'))
         except NotAuthorized:
