@@ -15,8 +15,7 @@ Until now added features:
 * Adds API calls for creating / updating resources from UnifiedViews (L-Catalog DPU)
 * Adds API call internal_api for proxy-ing API calls (L-FilesToCkan and L-RdfToCkan DPUs)
 
-TODO
--------
+
 
 Installation
 -------
