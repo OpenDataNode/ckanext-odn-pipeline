@@ -7,12 +7,12 @@ Created on 5.11.2014
 import socket
 
 import pylons.config as config
-from paste.deploy.converters import asbool
 
 import routes.mapper
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 import ckan.lib.helpers as h
+import logging
 
 from ckan.common import _, c
 from ckanext.pipeline.uv_helper import UVRestAPIWrapper
@@ -22,13 +22,6 @@ from dateutil.parser import parse
 
 GET = dict(method=['GET'])
 POST = dict(method=['POST'])
-
-uv_url = config.get('odn.uv.url', None)
-uv_api_url = config.get('odn.uv.api.url', None)
-uv_api_auth = '{0}:{1}'.format(config.get('odn.uv.api.auth.username', ''), config.get('odn.uv.api.auth.password', '')) 
-pipeline_allow_create = asbool(config.get('odn.uv.pipeline.allow.create', True))
-
-import logging
 log = logging.getLogger('ckanext')
 
 
@@ -46,6 +39,17 @@ STATUSES = {
     None: None,
     "": None
 }
+
+def get_url_without_slash_at_the_end(url):
+    if url and url.endswith("/"):
+        return url[:-1]
+    else:
+        return url
+
+uv_url = get_url_without_slash_at_the_end(config.get('odn.uv.url', None))
+uv_api_url = get_url_without_slash_at_the_end(config.get('odn.uv.api.url', None))
+uv_api_auth = '{0}:{1}'.format(config.get('odn.uv.api.auth.username', ''), config.get('odn.uv.api.auth.password', '')) 
+pipeline_allow_create = toolkit.asbool(config.get('odn.uv.pipeline.allow.create', True))
 
 
 def allows_create_pipe():

@@ -21,8 +21,6 @@ from ckanext.pipeline.uv_helper import UVRestAPIWrapper
 
 import pylons.config as config
 
-uv_url = config.get('odn.uv.url', None)
-uv_api_url = config.get('odn.uv.api.url', None)
 uv_api_auth = '{0}:{1}'.format(config.get('odn.uv.api.auth.username', ''), config.get('odn.uv.api.auth.password', ''))
 
 NotFound = logic.NotFound
@@ -36,6 +34,15 @@ get_action = logic.get_action
 
 log = logging.getLogger('ckanext')
 
+
+def get_url_without_slash_at_the_end(url):
+    if url and url.endswith("/"):
+        return url[:-1]
+    else:
+        return url
+
+uv_url = get_url_without_slash_at_the_end(config.get('odn.uv.url', None))
+uv_api_url = get_url_without_slash_at_the_end(config.get('odn.uv.api.url', None))
 
 def disable_schedules_for_pipe(pipe_id):
     try:
