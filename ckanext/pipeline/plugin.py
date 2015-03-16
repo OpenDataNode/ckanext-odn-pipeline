@@ -12,6 +12,7 @@ import routes.mapper
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 import ckan.lib.helpers as h
+import logging
 
 from ckan.common import _
 from ckanext.pipeline.uv_helper import UVRestAPIWrapper
@@ -22,10 +23,6 @@ from dateutil.parser import parse
 GET = dict(method=['GET'])
 POST = dict(method=['POST'])
 
-uv_url = config.get('odn.uv.url', None)
-uv_api_url = config.get('odn.uv.api.url', None)
-
-import logging
 log = logging.getLogger('ckanext')
 
 
@@ -43,6 +40,15 @@ STATUSES = {
     None: None,
     "": None
 }
+
+def get_url_without_slash_at_the_end(url):
+    if url and url.endswith("/"):
+        return url[:-1]
+    else:
+        return url
+
+uv_url = get_url_without_slash_at_the_end(config.get('odn.uv.url', None))
+uv_api_url = get_url_without_slash_at_the_end(config.get('odn.uv.api.url', None))
 
 # Our custom template helper function.
 def get_all_pipelines():
