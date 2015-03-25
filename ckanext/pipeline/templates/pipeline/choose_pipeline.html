@@ -1,10 +1,6 @@
 {% extends 'pipeline/choose_assign_action.html' %}
 
 {% import 'macros/form.html' as form %}
-{% block styles %}
-  {{ super() }}
-  {% resource 'ic_theme/pipeline.css' %}
-{% endblock %}
 
 {% block subtitle %}{{ _('Choose pipeline to copy') }} - {{ h.dataset_display_name(pkg) }}{% endblock %}
 
