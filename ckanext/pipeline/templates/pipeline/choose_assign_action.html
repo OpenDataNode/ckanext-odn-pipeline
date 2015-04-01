@@ -4,6 +4,11 @@
 
 {% set controller = 'ckanext.controllers.pipeline:ICController' %}
 
+{% block styles %}
+  {{ super() }}
+  {% resource 'ic_theme/pipeline.css' %}
+{% endblock %}
+
 {% block page_primary_action %}{% endblock %}
 
 {% block primary_content %}
