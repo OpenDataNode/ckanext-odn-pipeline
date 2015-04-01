@@ -1,10 +1,6 @@
 {% extends 'pipeline/choose_assign_action.html' %}
 
 {% import 'macros/form.html' as form %}
-{% block styles %}
-  {{ super() }}
-  {% resource 'ic_theme/pipeline.css' %}
-{% endblock %}
 
 {% block subtitle %}{{ _('Creating new pipeline') }} - {{ h.dataset_display_name(pkg) }}{% endblock %}
 
@@ -14,9 +10,9 @@
 
 {% block primary_content_inner %}
   {% if form_action == 'create_pipe_manually'%}
-    {% snippet 'pipeline/snippets/stages.html', stages=['complete', 'active'], labels=['Choose action', 'Create pipeline'] %}
+    {% snippet 'pipeline/snippets/stages.html', stages=['complete', 'active'], labels=[_('Choose action'), _('Create pipeline')] %}
   {% else %}
-    {% snippet 'pipeline/snippets/stages.html', stages=['complete', 'complete', 'active'], labels=['Choose action', None, 'Create pipeline'] %}
+    {% snippet 'pipeline/snippets/stages.html', stages=['complete', 'complete', 'active'], labels=[_('Choose action'), None, _('Create pipeline')] %}
   {% endif %}
   <form method='post' class="module-content form-horizontal" action="{% url_for controller=controller, action=form_action, id=c.pkg_dict.name %}">
   	<input id="pipeline" name="pipeline" type="hidden" value="{{ pipeline }}"/>
@@ -24,7 +20,7 @@
   	{{ form.textarea('description', id='description', value=descr, label=_('Description'), placeholder='Pipeline description', error=error) }}
     <div class="form-actions">
       {% link_for _('Back'), controller=controller, action='choose_action', id=c.pkg_dict.name, class_='btn' %}
-      <input type="submit" class="btn btn-primary" value="Finish" />
+      <input type="submit" class="btn btn-primary" value="{{ _('Finish') }}" />
     </div>
   </form>
 {% endblock %}

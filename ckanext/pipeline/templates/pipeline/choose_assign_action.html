@@ -4,6 +4,11 @@
 
 {% set controller = 'ckanext.controllers.pipeline:ICController' %}
 
+{% block styles %}
+  {{ super() }}
+  {% resource 'ic_theme/pipeline.css' %}
+{% endblock %}
+
 {% block page_primary_action %}{% endblock %}
 
 {% block primary_content %}
@@ -11,7 +16,7 @@
     {% block page_header %}{% endblock %}
     <div class="module-content">
       {% block primary_content_inner %}
-        {% snippet 'pipeline/snippets/stages.html', stages=['active', 'uncomplete'], labels=['Choose action'] %}
+        {% snippet 'pipeline/snippets/stages.html', stages=['active', 'uncomplete'], labels=[_('Choose action')] %}
         <form method='post' class="module-content form-horizontal" action="{% url_for controller=controller, action='choose_pipeline', id=c.pkg_dict.name %}">
           <label for="radio1" class="radio">
             <input id="radio1" name="action" value="existing" type="radio" class="radio" checked="checked" />
@@ -29,7 +34,7 @@
           {% endif %}
           <div class="form-actions">
           	{% link_for _('Back'), controller=controller, action='show', id=c.pkg_dict.name, class_='btn' %}
-			<input type="submit" class="btn btn-primary" value="Next step" />
+			<input type="submit" class="btn btn-primary" value="{{ _('Next step') }}" />
 		  </div>
         </form>
       {% endblock %}
