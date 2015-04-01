@@ -10,7 +10,7 @@
 
 {% block primary_content_inner %}
   {% resource 'ic_theme/pipelines.js' %}
-  {% snippet 'pipeline/snippets/stages.html', stages=['complete', 'complete', 'active'], labels=['Choose action', None, 'Finish'] %}
+  {% snippet 'pipeline/snippets/stages.html', stages=['complete', 'complete', 'active'], labels=[_('Choose action'), None, _('Finish')] %}
   {% if err_msg %}
   <div class="error">{{ err_msg }}</div>
   <div class="form-actions">
@@ -21,7 +21,7 @@
   <div>{{ msg }}</div>
   <div class="form-actions">
 	{% link_for _('Back'), controller=controller, action='show', id=c.pkg_dict.name, class_='btn' %}
-	<a id="finish-create-pipe" class="btn btn-primary" href="{{ uv_url }}" target="_blank">Finish</a>
+	<a id="finish-create-pipe" class="btn btn-primary" href="{{ uv_url }}" target="_blank">{{ _('Finish') }}</a>
   </div>
   {% endif %}
 {% endblock %}
