@@ -135,7 +135,7 @@ class ICController(base.BaseController):
             else:
                 abort(404, _('Not implemented yet'))
         else:
-            abort(404, _('Action was not choosed!'))
+            abort(404, _('Action was not choosen!'))
     
     def set_name_descr(self, id):
         # just to forwards choosed pipe id to copy to setting name and descr

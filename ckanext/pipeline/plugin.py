@@ -149,7 +149,7 @@ def get_dataset_pipelines(package_id):
             else:
                 val.append({u'id': pipes.pipeline_id, u'name':pipes.name, u'error': err_msg})
     except urllib2.URLError:
-        h.flash_error(_("Couldn't contact to UnifiedViews server."))
+        h.flash_error(_("Couldn't connect to UnifiedViews server."))
         
         # get info only from DB
         for pipes in dataset_pipes:
