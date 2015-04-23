@@ -100,6 +100,7 @@ def internal_api(context, data_dict=None):
     
     if data_dict.has_key('upload'):
         data['upload'] = data_dict['upload']
+        data['url'] = ''
     
     # any type
     
