@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '0.3.0'
+version = '0.4.0-SNAPSHOT'
 
 setup(
     name='ckanext-odn-pipeline',
@@ -35,7 +35,9 @@ setup(
                        'templates/pipeline/snippets/*.html']},
     include_package_data=True,
     zip_safe=False,
-    install_requires=[],
+    install_requires=[
+        "PasteDeploy==1.5.0", # the same as CKAN
+    ],
     message_extractors={
         'ckanext': [
             ('**.py', 'python', None),

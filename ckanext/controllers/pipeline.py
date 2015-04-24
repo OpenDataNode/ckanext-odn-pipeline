@@ -21,6 +21,7 @@ from ckanext.pipeline.uv_helper import UVRestAPIWrapper
 
 import pylons.config as config
 
+uv_api_auth = '{0}:{1}'.format(config.get('odn.uv.api.auth.username', ''), config.get('odn.uv.api.auth.password', ''))
 
 NotFound = logic.NotFound
 NotAuthorized = logic.NotAuthorized
@@ -42,6 +43,21 @@ def get_url_without_slash_at_the_end(url):
 
 uv_url = get_url_without_slash_at_the_end(config.get('odn.uv.url', None))
 uv_api_url = get_url_without_slash_at_the_end(config.get('odn.uv.api.url', None))
+
+def disable_schedules_for_pipe(pipe_id):
+    try:
+        uv_api = UVRestAPIWrapper(uv_api_url)
+        schedules = uv_api.get_all_schedules(pipe_id)
+        for schedule in schedules:
+            if not schedule.get('enabled', True):
+                continue # already disabled
+            schedule['enabled'] = False
+            uv_api.edit_pipe_schedule(pipe_id, schedule)
+    except Exception, e:
+        log.error('Failed to disable schedules for pipeline id {0}: {1}'.format(pipe_id, str(e)))
+    except socket.timeout, e:
+        log.error('Timeout: Failed to disable schedules for pipeline id {0}: {1}'.format(pipe_id, str(e)))
+
 
 class ICController(base.BaseController):
 
@@ -119,7 +135,7 @@ class ICController(base.BaseController):
             else:
                 abort(404, _('Not implemented yet'))
         else:
-            abort(404, _('Action was not choosed!'))
+            abort(404, _('Action was not choosen!'))
     
     def set_name_descr(self, id):
         # just to forwards choosed pipe id to copy to setting name and descr
@@ -181,8 +197,14 @@ class ICController(base.BaseController):
             package = get_action('package_show')(context, data_dict)
 
             # creating new Pipe in UV
-            uv_api = UVRestAPIWrapper(uv_api_url)
-            new_pipe = uv_api.create_copy_pipeline(pipe_to_copy, name, description)
+            uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
+            
+            org_id = package.get('owner_org', None)
+            user_id = None
+            if c.userobj:
+                user_id = c.userobj.id 
+            
+            new_pipe = uv_api.create_copy_pipeline(pipe_to_copy, name, description, user_id, org_id)
             
             # associate it with dataset
             if not new_pipe:
@@ -273,9 +295,12 @@ class ICController(base.BaseController):
                 h.flash_error(_("Couldn't remove pipeline, because there is no such pipeline assigned to this dataset."))
                 base.redirect(h.url_for('pipe_assign', id=id))
             else:
+                pipe_id = pipe.pipeline_id
                 pipe.delete()
                 pipe.commit()
                 h.flash_success(_('Pipeline removed from dataset successfully'))
+                
+                disable_schedules_for_pipe(pipe_id)
         except NotFound:
             abort(404, _('Dataset not found'))
         except NotAuthorized:
@@ -316,8 +341,14 @@ class ICController(base.BaseController):
             package = get_action('package_show')(context, data_dict)
 
             # creating new Pipe in UV
-            uv_api = UVRestAPIWrapper(uv_api_url)
-            new_pipe = uv_api.create_pipeline(name, description)
+            uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
+            
+            org_id = package.get('owner_org', None)
+            user_id = None
+            if c.userobj:
+                user_id = c.userobj.id 
+            
+            new_pipe = uv_api.create_pipeline(name, description, user_id, org_id)
             
             # associate it with dataset
             if not new_pipe:
@@ -352,8 +383,18 @@ class ICController(base.BaseController):
         
         err_msg = None
         try:
-            uv_api = UVRestAPIWrapper(uv_api_url)
-            execution = uv_api.execute_now(pipeline_id)
+            uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
+            
+            # get dataset org id
+            self._load(id)
+            org_id = c.pkg_dict.get('owner_org', None)
+            
+            # get id of logged user
+            user_id = None
+            if c.userobj:
+                user_id = c.userobj.id 
+            
+            execution = uv_api.execute_now(pipeline_id, user_id=user_id, org_id=org_id)
             log.debug("started execution: {0}".format(execution))
         except Exception, e:
             err_msg = _("Couldn't execute pipeline, probably UnifiedViews is not responding.")

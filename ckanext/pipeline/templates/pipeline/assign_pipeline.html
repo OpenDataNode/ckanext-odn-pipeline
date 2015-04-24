@@ -1,10 +1,6 @@
 {% extends 'pipeline/choose_pipeline.html' %}
 
 {% import 'macros/form.html' as form %}
-{% block styles %}
-  {{ super() }}
-  {% resource 'ic_theme/pipeline.css' %}
-{% endblock %}
 
 {% block subtitle %}{{ _('Choose existing pipeline') }} - {{ h.dataset_display_name(pkg) }}{% endblock %}
 

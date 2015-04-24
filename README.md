@@ -13,7 +13,7 @@ Until now added features:
 * Links to UV functionality
 * Uses ODN/UV rest API
 * Adds API calls for creating / updating resources from UnifiedViews (L-Catalog DPU)
-* Adds API call internal_api for proxy-ing API calls (L-FilesToCkan and L-RdfToCkan DPUs)
+* Adds API call internal_api for proxy-ing API calls
 
 
 
@@ -30,12 +30,22 @@ Add extension to ckan config: /etc/ckan/default/production.ini
 ckan.plugins = odn_pipeline odn_resource_update_api internal_api
 ```
 
+* odn_pipeline - plugin for association pipeline to dataset from CKAN GUI 
+* odn_resource_update_api - plugin needed for L-Catalog DPU
+* internal_api - plugin to proxy API calls, needed by DPUs: L-FilesToCkan, L-RdfToCkan, L-RelationalToCkan, L-RelationalDiffToCkan
+
 to section [app:main] add:
 ```ApacheConf
 # pipeline
 odn.uv.url = http://HOST/unifiedviews
 odn.uv.api.url = http://127.0.0.1:8080/master/api/1
 odn.uv.timeout = 5
+# uv rest api authorization
+odn.uv.api.auth.username = username
+odn.uv.api.auth.password = password
+
+# allow create pipelines from CKAN gui, default True (optional)
+odn.uv.pipeline.allow.create = False
 
 # resource update api (L-Catalog <-> IC), the URL are quoted in code
 odn.storage.rdf.uri.template = http://host/sparql?query=select {?s ?p ?o} from {storage_id}

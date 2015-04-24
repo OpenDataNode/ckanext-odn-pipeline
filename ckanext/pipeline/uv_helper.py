@@ -8,14 +8,13 @@ import logging
 
 import json
 import requests
-import urllib
 import urllib2
 import pylons.config as config
+import base64
 
 # doc https://team.eea.sk/wiki/pages/viewpage.action?pageId=108660564
-# TODO /pipelines/<pipeline_id>/schedules/
-# TODO /pipelines/<pipeline_id>/schedules/<id>
-# TODO /pipelines/<pipeline_id>/schedules/<schedule_id>
+# TODO POST /pipelines/<pipeline_id>/schedules
+# TODO GET /pipelines/<pipeline_id>/schedules/<id>
 # TODO GET /pipelines/<pipeline_id>/executions
 # TODO /pipelines/<pipeline_id>/executions/<execution_id>
 # TODO /pipelines/<pipeline_id>/executions
@@ -23,15 +22,22 @@ import pylons.config as config
 
 # TODO this class to ckancommons
 
-TIMEOUT =  int(config.get('odn.uv.timeout', 5))
+TIMEOUT =  int(config.get(u'odn.uv.timeout', 5))
+AUTH_HEADER_FIELD_NAME = u'Authorization'
+USER_EXT_ID = u'userExternalId'
+ORG_EXT_ID = u'organizationExternalId'
 
 log = logging.getLogger('ckanext')
 
+
 class UVRestAPIWrapper():
     
-    def __init__(self, uv_url):
+    def __init__(self, uv_url, auth=None):
         assert uv_url
         self.url = uv_url
+        self.auth = None
+        if auth:
+            self.auth = base64.b64encode(auth)
         
 
     def _send_request(self, uv_url):
@@ -40,6 +46,8 @@ class UVRestAPIWrapper():
         assert uv_url
         log.debug("uv_helper sending request to: {0}".format(uv_url))
         request = urllib2.Request(uv_url)
+        if self.auth:
+            request.add_header(AUTH_HEADER_FIELD_NAME, self.auth)
         # Make the HTTP request.
         response = urllib2.urlopen(request, timeout=TIMEOUT)
         assert response.code == 200
@@ -48,21 +56,28 @@ class UVRestAPIWrapper():
         return response_dict
 
 
-    def _send_request_with_data(self, uv_url, data_string):
+    def _send_request_with_data(self, uv_url, data_string, is_put=False):
         """Sends POST request with JSON data
         """
-        print data_string
         assert uv_url
         headers = {'content-type': 'application/json'}
-        response = requests.post(uv_url, data=data_string, headers=headers)
+        if self.auth:
+            headers[AUTH_HEADER_FIELD_NAME] = self.auth
+
+        if is_put:
+            response = requests.put(uv_url, data=data_string, headers=headers)
+        else:
+            response = requests.post(uv_url, data=data_string, headers=headers)
         if response.status_code != 200:
             raise Exception("Error sending request to {0}: {1}".format(uv_url, response.text))
         response_dict = response.json()
         return response_dict
     
     
-    def get_pipelines(self):
+    def get_pipelines(self, org=None):
         uv_url = '{0}/pipelines'.format(self.url)
+        if org:
+            uv_url = '{0}?{1}={2}'.format(uv_url, ORG_EXT_ID, org)
         return self._send_request(uv_url)
     
     
@@ -72,16 +87,26 @@ class UVRestAPIWrapper():
         return self._send_request(uv_url)
 
 
-    def create_pipeline(self, name, description):
+    def create_pipeline(self, name, description, user_id, org_id):
         uv_url = '{0}/pipelines'.format(self.url)
-        data = {'name':name, 'description': description}
+        data = {
+                'name':name,
+                'description': description,
+                USER_EXT_ID: user_id,
+                ORG_EXT_ID: org_id
+        }
         return self._send_request_with_data(uv_url, json.dumps(data))
     
     
-    def create_copy_pipeline(self, pipe_to_copy, name, description):
+    def create_copy_pipeline(self, pipe_to_copy, name, description, user_id, org_id):
         assert pipe_to_copy
         uv_url = '{0}/pipelines/{1}/clones'.format(self.url, pipe_to_copy)
-        data = {'name':name, 'description': description}
+        data = {
+                'name':name,
+                'description': description,
+                USER_EXT_ID: user_id,
+                ORG_EXT_ID: org_id
+        }
         return self._send_request_with_data(uv_url, json.dumps(data))
 
 
@@ -120,9 +145,33 @@ class UVRestAPIWrapper():
         return None, None, None 
     
 
-    def execute_now(self, pipe_id, is_debugging=False):
+    def execute_now(self, pipe_id, is_debugging=False, user_id=None, org_id=None):
         assert pipe_id
         uv_url = '{0}/pipelines/{1}/executions/'.format(self.url, pipe_id)
-        data = {'debugging':is_debugging}
+        data = {
+                'debugging':is_debugging,
+                USER_EXT_ID: user_id,
+                ORG_EXT_ID: org_id
+        }
         return self._send_request_with_data(uv_url, json.dumps(data))
 
+
+    def get_all_schedules(self, pipe_id):
+        """ Gets all schedules for selected pipeline
+        
+        :param pipe_id: pipeline id
+        :type pipe_id: interger
+        
+        :return: list of dictionaries
+        """
+        assert pipe_id
+        uv_url = '{0}/pipelines/{1}/schedules'.format(self.url, pipe_id)
+        return self._send_request(uv_url)
+    
+
+    def edit_pipe_schedule(self, pipe_id, schedule):
+        assert schedule
+        schedule_id = schedule['id']
+        uv_url = '{0}/pipelines/{1}/schedules/{2}' \
+                    .format(self.url, pipe_id, schedule_id)
+        return self._send_request_with_data(uv_url, json.dumps(schedule), is_put=True)

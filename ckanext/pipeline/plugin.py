@@ -14,7 +14,7 @@ import ckan.plugins.toolkit as toolkit
 import ckan.lib.helpers as h
 import logging
 
-from ckan.common import _
+from ckan.common import _, c
 from ckanext.pipeline.uv_helper import UVRestAPIWrapper
 from ckanext.model.pipelines import Pipelines
 import urllib2
@@ -22,7 +22,6 @@ from dateutil.parser import parse
 
 GET = dict(method=['GET'])
 POST = dict(method=['POST'])
-
 log = logging.getLogger('ckanext')
 
 
@@ -49,13 +48,28 @@ def get_url_without_slash_at_the_end(url):
 
 uv_url = get_url_without_slash_at_the_end(config.get('odn.uv.url', None))
 uv_api_url = get_url_without_slash_at_the_end(config.get('odn.uv.api.url', None))
+uv_api_auth = '{0}:{1}'.format(config.get('odn.uv.api.auth.username', ''), config.get('odn.uv.api.auth.password', '')) 
+pipeline_allow_create = toolkit.asbool(config.get('odn.uv.pipeline.allow.create', True))
+
+
+def allows_create_pipe():
+    return pipeline_allow_create
 
 # Our custom template helper function.
 def get_all_pipelines():
     assert uv_api_url
     try:
-        uv_api = UVRestAPIWrapper(uv_api_url)
-        pipes = uv_api.get_pipelines()
+        if c.pkg.owner_org:
+            org_id = c.pkg.owner_org
+        else:
+            # raise error
+            err_msg = _('Error: Organization is not set for dataset {dataset_name}').format(dataset_name=c.pkg.name)
+            log.error(err_msg)
+            h.flash_error(err_msg)
+            return []            
+        
+        uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
+        pipes = uv_api.get_pipelines(org=org_id)
         return pipes
     except Exception, e:
         h.flash_error(_("Couldn't get pipelines, probably UnifiedViews is not responding."))
@@ -69,7 +83,7 @@ def get_all_pipelines():
 def get_pipeline(pipe_id):
     assert uv_api_url
     try:
-        uv_api = UVRestAPIWrapper(uv_api_url)
+        uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
         pipe = uv_api.get_pipeline_by_id(pipe_id)
         return pipe, None
     except urllib2.HTTPError, e:
@@ -135,7 +149,7 @@ def get_dataset_pipelines(package_id):
             else:
                 val.append({u'id': pipes.pipeline_id, u'name':pipes.name, u'error': err_msg})
     except urllib2.URLError:
-        h.flash_error(_("Couldn't contact to UnifiedViews server."))
+        h.flash_error(_("Couldn't connect to UnifiedViews server."))
         
         # get info only from DB
         for pipes in dataset_pipes:
@@ -153,7 +167,7 @@ def add_last_exec_info(pipe_id, pipe):
     
     error_msg = None
     try:
-        uv_api = UVRestAPIWrapper(uv_api_url)
+        uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
         last_exec = uv_api.get_last_finished_execution(pipe_id)
         
         if not last_exec:
@@ -182,7 +196,7 @@ def add_next_exec_info(pipe_id, pipe):
     
     error_msg = None
     try:
-        uv_api = UVRestAPIWrapper(uv_api_url)
+        uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
         schedule_id, next_exec, next_exec_status = uv_api.get_next_execution_info(pipe_id)
         
         pipe['next_exec'] = format_date(next_exec)
@@ -252,7 +266,8 @@ class PipelinePlugin(plugins.SingletonPlugin):
     # see the ITemplateHelpers plugin interface.
     def get_helpers(self):
         return {'get_pipeline_available': get_pipelines_not_assigned,
-                'get_dataset_pipelines': get_dataset_pipelines
+                'get_dataset_pipelines': get_dataset_pipelines,
+                'allows_create_pipe': allows_create_pipe
                 }
     
     
