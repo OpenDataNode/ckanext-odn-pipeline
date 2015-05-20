@@ -69,7 +69,7 @@ def get_all_pipelines():
             return []            
         
         uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
-        pipes = uv_api.get_pipelines(actor=user_external_id)
+        pipes = uv_api.get_pipelines(user_external_id)
         return pipes
     except Exception, e:
         h.flash_error(_("Couldn't get pipelines, probably UnifiedViews is not responding."))
