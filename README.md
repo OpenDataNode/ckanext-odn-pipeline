@@ -185,6 +185,14 @@ Request:
 For 'package_update', 'package_show', 'resource_create' actions the pipeline_id is converted to appropriate package id. So for these
 actions its not necessary to add the ids to the data parameter and will be overwritten if both are given.
 
+Added special action:
+* resource_download - enabling to download file through CKAN API
+	* WARNING: this change requires change in ApiController (in CKAN core) to function
+	* required data parameters:
+		* package_id - dataset id, that the resource belongs to
+		* id - resource id
+	* response if success: file, header parameter content-type indicating mimetype
+	* response if failed: standard CKAN API response
 
 Internationalization (i18n)
 -------
