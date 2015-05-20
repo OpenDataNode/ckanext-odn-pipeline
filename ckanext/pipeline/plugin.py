@@ -59,17 +59,17 @@ def allows_create_pipe():
 def get_all_pipelines():
     assert uv_api_url
     try:
-        if c.pkg.owner_org:
-            org_id = c.pkg.owner_org
+        if c.userobj:
+            user_external_id = c.userobj.id
         else:
             # raise error
-            err_msg = _('Error: Organization is not set for dataset {dataset_name}').format(dataset_name=c.pkg.name)
+            err_msg = _('Error: Only logged in user can associate pipelines.')
             log.error(err_msg)
             h.flash_error(err_msg)
             return []            
         
         uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
-        pipes = uv_api.get_pipelines(org=org_id)
+        pipes = uv_api.get_pipelines(actor=user_external_id)
         return pipes
     except Exception, e:
         h.flash_error(_("Couldn't get pipelines, probably UnifiedViews is not responding."))

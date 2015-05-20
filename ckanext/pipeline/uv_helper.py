@@ -25,7 +25,7 @@ import base64
 TIMEOUT =  int(config.get(u'odn.uv.timeout', 5))
 AUTH_HEADER_FIELD_NAME = u'Authorization'
 USER_EXT_ID = u'userExternalId'
-ORG_EXT_ID = u'organizationExternalId'
+USER_ACTOR_EXT_ID = u'userActorExternalId'
 
 log = logging.getLogger('ckanext')
 
@@ -74,10 +74,10 @@ class UVRestAPIWrapper():
         return response_dict
     
     
-    def get_pipelines(self, org=None):
+    def get_pipelines(self, user_id=None):
         uv_url = '{0}/pipelines'.format(self.url)
-        if org:
-            uv_url = '{0}?{1}={2}'.format(uv_url, ORG_EXT_ID, org)
+        if user_id:
+            uv_url = '{0}?{1}={2}'.format(uv_url, USER_EXT_ID, user_id)
         return self._send_request(uv_url)
     
     
@@ -87,25 +87,25 @@ class UVRestAPIWrapper():
         return self._send_request(uv_url)
 
 
-    def create_pipeline(self, name, description, user_id, org_id):
+    def create_pipeline(self, name, description, user_id, user_actor_id):
         uv_url = '{0}/pipelines'.format(self.url)
         data = {
                 'name':name,
                 'description': description,
                 USER_EXT_ID: user_id,
-                ORG_EXT_ID: org_id
+                USER_ACTOR_EXT_ID: user_actor_id
         }
         return self._send_request_with_data(uv_url, json.dumps(data))
     
     
-    def create_copy_pipeline(self, pipe_to_copy, name, description, user_id, org_id):
+    def create_copy_pipeline(self, pipe_to_copy, name, description, user_id, user_actor_id):
         assert pipe_to_copy
         uv_url = '{0}/pipelines/{1}/clones'.format(self.url, pipe_to_copy)
         data = {
                 'name':name,
                 'description': description,
                 USER_EXT_ID: user_id,
-                ORG_EXT_ID: org_id
+                USER_ACTOR_EXT_ID: user_actor_id
         }
         return self._send_request_with_data(uv_url, json.dumps(data))
 
@@ -145,13 +145,13 @@ class UVRestAPIWrapper():
         return None, None, None 
     
 
-    def execute_now(self, pipe_id, is_debugging=False, user_id=None, org_id=None):
+    def execute_now(self, pipe_id, is_debugging=False, user_id=None, user_actor_id=None):
         assert pipe_id
         uv_url = '{0}/pipelines/{1}/executions/'.format(self.url, pipe_id)
         data = {
                 'debugging':is_debugging,
                 USER_EXT_ID: user_id,
-                ORG_EXT_ID: org_id
+                USER_ACTOR_EXT_ID: user_actor_id
         }
         return self._send_request_with_data(uv_url, json.dumps(data))
 
