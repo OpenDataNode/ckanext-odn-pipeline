@@ -20,6 +20,7 @@ from ckanext.pipeline.plugin import get_pipeline, get_available_pipes_options,\
 from ckanext.pipeline.uv_helper import UVRestAPIWrapper
 
 import pylons.config as config
+from pylons import session
 
 uv_api_auth = '{0}:{1}'.format(config.get('odn.uv.api.auth.username', ''), config.get('odn.uv.api.auth.password', ''))
 
@@ -199,12 +200,12 @@ class ICController(base.BaseController):
             # creating new Pipe in UV
             uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
             
-            org_id = package.get('owner_org', None)
+            actor_id = session.get('ckanext-cas-actorid', None)
             user_id = None
             if c.userobj:
                 user_id = c.userobj.id 
             
-            new_pipe = uv_api.create_copy_pipeline(pipe_to_copy, name, description, user_id, org_id)
+            new_pipe = uv_api.create_copy_pipeline(pipe_to_copy, name, description, user_id, actor_id)
             
             # associate it with dataset
             if not new_pipe:
@@ -343,12 +344,12 @@ class ICController(base.BaseController):
             # creating new Pipe in UV
             uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
             
-            org_id = package.get('owner_org', None)
+            actor_id = session.get('ckanext-cas-actorid', None)
             user_id = None
             if c.userobj:
                 user_id = c.userobj.id 
             
-            new_pipe = uv_api.create_pipeline(name, description, user_id, org_id)
+            new_pipe = uv_api.create_pipeline(name, description, user_id, actor_id)
             
             # associate it with dataset
             if not new_pipe:
@@ -387,14 +388,14 @@ class ICController(base.BaseController):
             
             # get dataset org id
             self._load(id)
-            org_id = c.pkg_dict.get('owner_org', None)
+            actor_id = session.get('ckanext-cas-actorid', None)
             
             # get id of logged user
             user_id = None
             if c.userobj:
                 user_id = c.userobj.id 
             
-            execution = uv_api.execute_now(pipeline_id, user_id=user_id, org_id=org_id)
+            execution = uv_api.execute_now(pipeline_id, user_id=user_id, user_actor_id=actor_id)
             log.debug("started execution: {0}".format(execution))
         except Exception, e:
             err_msg = _("Couldn't execute pipeline, probably UnifiedViews is not responding.")

@@ -15,6 +15,7 @@ import pylons.config as config
 
 from ckan.model.user import User
 import json
+from ckan.controllers.package import PackageController
 
 NotFound = logic.NotFound
 get_action = logic.get_action
@@ -96,6 +97,9 @@ def internal_api(context, data_dict=None):
         # if upload data is actually a string
         data = json.loads(data)
     
+    if 'resource_download' in action:
+        return resource_download(context, data)
+    
     # type == 'FILE'
     
     if data_dict.has_key('upload'):
@@ -111,7 +115,7 @@ def internal_api(context, data_dict=None):
         
         if dataset_to_pipeline:
             # converting pipeline_id to 'id' or 'package_id'
-            if 'resource_create' == action:
+            if action in ['resource_create']:
                 data['package_id'] = dataset_to_pipeline.package_id
             elif action in ['package_update', 'package_show']:
                 data['id'] = dataset_to_pipeline.package_id
@@ -123,6 +127,25 @@ def internal_api(context, data_dict=None):
         data['url'] = get_rdf_url(data_dict)
     
     return get_action(action)(context, data)
+
+
+def resource_download(context, data):
+    
+    check_and_bust('package_id', data)
+    check_and_bust('id', data)
+    
+    # changing POST request to GET request
+    # needed because only GET request can return file
+    plugins.toolkit.request.environ['REQUEST_METHOD'] = 'GET'
+    
+    package_id = data.get('package_id')
+    resource_id = data.get('id')
+
+    rsc = get_action('resource_show')(context, {'id': resource_id})
+    pkg = get_action('package_show')(context, {'id': package_id})
+
+    return PackageController().resource_download(package_id, resource_id)
+
 
 def get_rdf_url(data_dict):
     check_and_bust('value', data_dict)
