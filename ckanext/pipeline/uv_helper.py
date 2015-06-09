@@ -11,6 +11,7 @@ import requests
 import urllib2
 import pylons.config as config
 import base64
+from urllib2 import HTTPError
 
 # doc https://team.eea.sk/wiki/pages/viewpage.action?pageId=108660564
 # TODO POST /pipelines/<pipeline_id>/schedules
@@ -49,11 +50,30 @@ class UVRestAPIWrapper():
         if self.auth:
             request.add_header(AUTH_HEADER_FIELD_NAME, self.auth)
         # Make the HTTP request.
-        response = urllib2.urlopen(request, timeout=TIMEOUT)
-        assert response.code == 200
+        try:
+            response = urllib2.urlopen(request, timeout=TIMEOUT)
+        except HTTPError, e:
+            self._process_error_and_raise_it(e)
         # Use the json module to load CKAN's response into a dictionary.
         response_dict = json.loads(response.read())
         return response_dict
+    
+    
+    # [urllib2 requests] processes HttpError and raises appropriate error msg
+    def _process_error_and_raise_it(self, error):
+        err_msg = error.reason
+        if error.hdrs.get('content-type', '') == 'application/json':
+            err_dict = json.loads(error.fp.read())
+            err_msg = err_dict.get('error', err_dict)
+        error.msg = err_msg
+        raise error
+    
+    # [for requests module] the same error processing
+    def _process_error_and_raise_it2(self, response):
+        error_msg = response.text
+        if response.headers.get('content-type') == 'application/json':
+            error_msg = response.json().get('error')
+        raise HTTPError(response.url, response.status_code, error_msg, response.headers, None)
 
 
     def _send_request_with_data(self, uv_url, data_string, is_put=False):
@@ -69,7 +89,8 @@ class UVRestAPIWrapper():
         else:
             response = requests.post(uv_url, data=data_string, headers=headers)
         if response.status_code != 200:
-            raise Exception("Error sending request to {0}: {1}".format(uv_url, response.text))
+            log.error("Error sending request to {0}: {1}".format(uv_url, response.text))
+            self._process_error_and_raise_it2(response)
         response_dict = response.json()
         return response_dict
     

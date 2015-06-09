@@ -223,7 +223,7 @@ class ICController(base.BaseController):
         except NotAuthorized:
             abort(401, _('User {user} not authorized to edit {id}').format(user=c.user, id=id))
         except Exception, e:
-            err_msg = _("Couldn't create/associate pipeline, probably UnifiedViews is not responding.")
+            err_msg = _("Couldn't create/associate pipeline: {error}".format(error=str(e)))
             log.exception(e)
         except socket.timeout, e:
             err_msg = _("Connecting to UnifiedViews timed out.")
@@ -367,8 +367,16 @@ class ICController(base.BaseController):
         except NotAuthorized:
             abort(401, _('User {user} not authorized to edit {id}').format(user=c.user, id=id))
         except Exception, e:
-            err_msg = _("Couldn't create/associate pipeline, probably UnifiedViews is not responding.")
+            err_msg = _("Couldn't create/associate pipeline: {error}".format(error=str(e)))
             log.exception(e)
+            self._load(id)
+            vars = {
+                'form_action': 'create_pipe_manually',
+                'name': name,
+                'descr': description,
+                'err_msg': err_msg
+            }
+            return render('pipeline/create_pipeline.html', extra_vars = vars)
         except socket.timeout, e:
             err_msg = _("Connecting to UnifiedViews timed out.")
         
@@ -398,7 +406,7 @@ class ICController(base.BaseController):
             execution = uv_api.execute_now(pipeline_id, user_id=user_id, user_actor_id=actor_id)
             log.debug("started execution: {0}".format(execution))
         except Exception, e:
-            err_msg = _("Couldn't execute pipeline, probably UnifiedViews is not responding.")
+            err_msg = _("Couldn't execute pipeline: {error}".format(error=str(e)))
             log.exception(e)
         except socket.timeout, e:
             err_msg = _("Connecting to UnifiedViews timed out.")
