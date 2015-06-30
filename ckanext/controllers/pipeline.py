@@ -55,9 +55,9 @@ def disable_schedules_for_pipe(pipe_id):
             schedule['enabled'] = False
             uv_api.edit_pipe_schedule(pipe_id, schedule)
     except Exception, e:
-        log.error('Failed to disable schedules for pipeline id {0}: {1}'.format(pipe_id, str(e)))
+        log.error('Failed to disable schedules for pipeline id {0}: {1}'.format(pipe_id, e))
     except socket.timeout, e:
-        log.error('Timeout: Failed to disable schedules for pipeline id {0}: {1}'.format(pipe_id, str(e)))
+        log.error('Timeout: Failed to disable schedules for pipeline id {0}: {1}'.format(pipe_id, e))
 
 
 class ICController(base.BaseController):
@@ -223,7 +223,7 @@ class ICController(base.BaseController):
         except NotAuthorized:
             abort(401, _('User {user} not authorized to edit {id}').format(user=c.user, id=id))
         except Exception, e:
-            err_msg = _("Couldn't create/associate pipeline: {error}".format(error=str(e)))
+            err_msg = _("Couldn't create/associate pipeline: {error}".format(error=e.msg))
             log.exception(e)
         except socket.timeout, e:
             err_msg = _("Connecting to UnifiedViews timed out.")
@@ -367,7 +367,7 @@ class ICController(base.BaseController):
         except NotAuthorized:
             abort(401, _('User {user} not authorized to edit {id}').format(user=c.user, id=id))
         except Exception, e:
-            err_msg = _("Couldn't create/associate pipeline: {error}".format(error=str(e)))
+            err_msg = _("Couldn't create/associate pipeline: {error}".format(error=e.msg))
             log.exception(e)
             self._load(id)
             vars = {
@@ -406,7 +406,7 @@ class ICController(base.BaseController):
             execution = uv_api.execute_now(pipeline_id, user_id=user_id, user_actor_id=actor_id)
             log.debug("started execution: {0}".format(execution))
         except Exception, e:
-            err_msg = _("Couldn't execute pipeline: {error}".format(error=str(e)))
+            err_msg = _("Couldn't execute pipeline: {error}".format(error=e.msg))
             log.exception(e)
         except socket.timeout, e:
             err_msg = _("Connecting to UnifiedViews timed out.")

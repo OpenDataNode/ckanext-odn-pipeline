@@ -64,7 +64,9 @@ class UVRestAPIWrapper():
         err_msg = error.reason
         if error.hdrs.get('content-type', '') == 'application/json':
             err_dict = json.loads(error.fp.read())
-            err_msg = err_dict.get('error', err_dict)
+            err_msg = err_dict.get('errorMessage', err_dict)
+            if err_dict.has_key('technicalMessage'):
+                log.error(err_dict.get('technicalMessage'))
         error.msg = err_msg
         raise error
     
@@ -72,7 +74,10 @@ class UVRestAPIWrapper():
     def _process_error_and_raise_it2(self, response):
         error_msg = response.text
         if response.headers.get('content-type') == 'application/json':
-            error_msg = response.json().get('error')
+            err_dict = response.json()
+            error_msg = err_dict.get('errorMessage')
+            if err_dict.has_key('technicalMessage'):
+                log.error(err_dict.get('technicalMessage'))
         raise HTTPError(response.url, response.status_code, error_msg, response.headers, None)
 
 
