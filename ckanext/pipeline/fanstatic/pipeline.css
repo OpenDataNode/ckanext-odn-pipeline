@@ -22,6 +22,11 @@ div.hidden {
 	position: relative;
 }
 
+div.dataset-content .dataset-heading {
+	width: 80%;
+	word-wrap: break-word;
+}
+
 .dataset-content .btn-group {
 	position: absolute;
 	top: -5px;
