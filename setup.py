@@ -23,8 +23,7 @@ setup(
                         'ckanext.model',
                         'ckanext.commands',
                         'ckanext.controllers',
-                        'ckanext.internal_api',
-                        'ckanext.resource_update_api'],
+                        'ckanext.internal_api'],
     package_data={'': [
                        'i18n/*/LC_MESSAGES/*.po',
                        'fanstatic/*.css',\
@@ -48,7 +47,6 @@ setup(
     """
     [ckan.plugins]
     odn_pipeline=ckanext.pipeline.plugin:PipelinePlugin
-    odn_resource_update_api=ckanext.resource_update_api.plugin:ResourceUpdateAPIPlugin
     internal_api=ckanext.internal_api.plugin:InternalApiPlugin
     [paste.paster_command]
     pipeline-cmd = ckanext.commands.pipeline_cmd:PipelineCmd
