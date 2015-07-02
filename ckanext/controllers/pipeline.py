@@ -55,7 +55,7 @@ def disable_schedules_for_pipe(pipe_id):
             schedule['enabled'] = False
             uv_api.edit_pipe_schedule(pipe_id, schedule)
     except Exception, e:
-        log.error('Failed to disable schedules for pipeline id {0}: {1}'.format(pipe_id, e))
+        log.error('Failed to disable schedules for pipeline id {0}: {1}'.format(pipe_id, e.msg))
     except socket.timeout, e:
         log.error('Timeout: Failed to disable schedules for pipeline id {0}: {1}'.format(pipe_id, e))
 
@@ -86,15 +86,15 @@ class ICController(base.BaseController):
         try:
             check_access('package_update', context, data_dict)
         except NotAuthorized, e:
-            abort(401, _('User {user} not authorized to edit {id}').format(user=c.user, id=id))
+            abort(401, _(u'User {user} not authorized to edit {id}').format(user=c.user, id=id))
         # check if package exists
         try:
             c.pkg_dict = get_action('package_show')(context, data_dict)
             c.pkg = context['package']
         except NotFound:
-            abort(404, _('Dataset not found'))
+            abort(404, _(u'Dataset not found'))
         except NotAuthorized:
-            abort(401, _('Unauthorized to read package {id}').format(id=id))
+            abort(401, _(u'Unauthorized to read package {id}').format(id=id))
         
         lookup_package_plugin(package_type).setup_template_variables(context, {'id': id})
     
@@ -130,13 +130,13 @@ class ICController(base.BaseController):
                 vars = {'options': options,
                         'descriptions': descriptions,
                         'form_action': 'set_name_descr',
-                        'submit_label': _('Next step')
+                        'submit_label': _(u'Next step')
                         }
                 return render('pipeline/choose_pipeline.html', extra_vars = vars)
             else:
-                abort(404, _('Not implemented yet'))
+                abort(404, _(u'Not implemented yet'))
         else:
-            abort(404, _('Action was not choosen!'))
+            abort(404, _(u'Action was not choosen!'))
     
     def set_name_descr(self, id):
         # just to forwards choosed pipe id to copy to setting name and descr
@@ -152,7 +152,7 @@ class ICController(base.BaseController):
                     'descriptions': descriptions,
                     'form_action': 'set_name_descr'  
             }
-            h.flash_error(_("Choose pipeline to copy."))
+            h.flash_error(_(u"Choose pipeline to copy."))
             return render('pipeline/choose_pipeline.html', extra_vars = vars)
         
         self._load(id)
@@ -177,7 +177,7 @@ class ICController(base.BaseController):
             pipe_to_copy = data[u'pipeline']
             
         if not name.strip():
-            h.flash_error(_("Pipeline name is required."))
+            h.flash_error(_(u"Pipeline name is required."))
             self._load(id)
             return render('pipeline/create_pipeline.html',
                            extra_vars={'descr': description, 
@@ -209,24 +209,33 @@ class ICController(base.BaseController):
             
             # associate it with dataset
             if not new_pipe:
-                err_msg = _("Pipeline wasn't created.")
+                err_msg = _(u"Pipeline wasn't created.")
             elif Pipelines.by_pipeline_id(new_pipe['id']): # checks if already exists
-                err_msg = _('Pipeline is already associated to some dataset.')
+                err_msg = _(u'Pipeline is already associated to some dataset.')
             else:
                 # adds pipe association
                 package_pipe = Pipelines(package['id'], new_pipe['id'], name=new_pipe['name'])
                 package_pipe.save() # this adds and commits too
-                msg = _("Pipeline {name} assigned successfully.").format(name=new_pipe['name'])
+                msg = _(u"Pipeline {name} assigned successfully.").format(name=new_pipe['name'])
                 open_on_load = uv_url + '/#!PipelineEdit/{pipe_id}'.format(pipe_id=new_pipe['id'])
         except NotFound:
-            abort(404, _('Dataset not found'))
+            abort(404, _(u'Dataset not found'))
         except NotAuthorized:
-            abort(401, _('User {user} not authorized to edit {id}').format(user=c.user, id=id))
+            abort(401, _(u'User {user} not authorized to edit {id}').format(user=c.user, id=id))
         except Exception, e:
-            err_msg = _("Couldn't create/associate pipeline: {error}".format(error=e.msg))
             log.exception(e)
+            err_msg = _(u"Couldn't create/associate pipeline: {error}").format(error=e.msg)
+            self._load(id)
+            vars = {
+                'form_action': 'create_copy',
+                'name': name,
+                'descr': description,
+                'pipeline':pipe_to_copy,
+                'err_msg': err_msg
+            }
+            return render('pipeline/create_pipeline.html', extra_vars = vars)
         except socket.timeout, e:
-            err_msg = _("Connecting to UnifiedViews timed out.")
+            err_msg = _(u"Connecting to UnifiedViews timed out.")
         
         self._load(id)
         vars = {'uv_url': open_on_load,
@@ -253,7 +262,7 @@ class ICController(base.BaseController):
                    'auth_user_obj': c.userobj}
 
         if not pipe:
-            h.flash_notice(_("No pipeline selected."))
+            h.flash_notice(_(u"No pipeline selected."))
             base.redirect(h.url_for('dataset_pipelines', id=id))
             return
 
@@ -263,17 +272,17 @@ class ICController(base.BaseController):
             
             # checks if already exists
             if Pipelines.by_pipeline_id(pipe['id']):
-                h.flash_error(_('Pipeline is already associated to some dataset.'))
+                h.flash_error(_(u'Pipeline is already associated to some dataset.'))
                 base.redirect(h.url_for('pipe_assign', id=id))
             else:
                 # adds pipe association
                 package_pipe = Pipelines(package['id'], pipe['id'], name=pipe['name'])
                 package_pipe.save() # this adds and commits too
-                h.flash_success(_("Pipeline assigned successfully."))
+                h.flash_success(_(u"Pipeline assigned successfully."))
         except NotFound:
-            abort(404, _('Dataset not found'))
+            abort(404, _(u'Dataset not found'))
         except NotAuthorized:
-            abort(401, _('User {user} not authorized to edit {id}').format(user=c.user, id=id))
+            abort(401, _(u'User {user} not authorized to edit {id}').format(user=c.user, id=id))
         
         base.redirect(h.url_for('pipe_assign', id=id))
 
@@ -293,19 +302,19 @@ class ICController(base.BaseController):
             pipe = Pipelines(package['id'], pipeline_id).get()
             
             if not pipe:
-                h.flash_error(_("Couldn't remove pipeline, because there is no such pipeline assigned to this dataset."))
+                h.flash_error(_(u"Couldn't remove pipeline, because there is no such pipeline assigned to this dataset."))
                 base.redirect(h.url_for('pipe_assign', id=id))
             else:
                 pipe_id = pipe.pipeline_id
                 pipe.delete()
                 pipe.commit()
-                h.flash_success(_('Pipeline removed from dataset successfully'))
+                h.flash_success(_(u'Pipeline removed from dataset successfully'))
                 
                 disable_schedules_for_pipe(pipe_id)
         except NotFound:
-            abort(404, _('Dataset not found'))
+            abort(404, _(u'Dataset not found'))
         except NotAuthorized:
-            abort(401, _('User {user} not authorized to edit {id}').format(user=c.user, id=id))
+            abort(401, _(u'User {user} not authorized to edit {id}').format(user=c.user, id=id))
         
         base.redirect(h.url_for('pipe_assign', id=id))
         
@@ -322,7 +331,7 @@ class ICController(base.BaseController):
             description = data[u'description']
             
         if not name.strip():
-            h.flash_error(_("Pipeline name is required."))
+            h.flash_error(_(u"Pipeline name is required."))
             self._load(id)
             return render('pipeline/create_pipeline.html',
                            extra_vars={'descr': description, 
@@ -353,22 +362,22 @@ class ICController(base.BaseController):
             
             # associate it with dataset
             if not new_pipe:
-                err_msg = _("Pipeline wasn't created.")
+                err_msg = _(u"Pipeline wasn't created.")
             elif Pipelines.by_pipeline_id(new_pipe['id']): # checks if already exists
-                err_msg = _('Pipeline is already associated to some dataset.')
+                err_msg = _(u'Pipeline is already associated to some dataset.')
             else:
                 # adds pipe association
                 package_pipe = Pipelines(package['id'], new_pipe['id'], name=new_pipe['name'])
                 package_pipe.save() # this adds and commits too
-                msg = _("Pipeline {name} assigned successfully.").format(name=new_pipe['name'])
+                msg = _(u"Pipeline {name} assigned successfully.").format(name=new_pipe['name'])
                 open_on_load = uv_url + '/#!PipelineEdit/{pipe_id}'.format(pipe_id=new_pipe['id'])
         except NotFound:
-            abort(404, _('Dataset not found'))
+            abort(404, _(u'Dataset not found'))
         except NotAuthorized:
-            abort(401, _('User {user} not authorized to edit {id}').format(user=c.user, id=id))
+            abort(401, _(u'User {user} not authorized to edit {id}').format(user=c.user, id=id))
         except Exception, e:
-            err_msg = _("Couldn't create/associate pipeline: {error}".format(error=e.msg))
             log.exception(e)
+            err_msg = _(u"Couldn't create/associate pipeline: {error}").format(error=e.msg)
             self._load(id)
             vars = {
                 'form_action': 'create_pipe_manually',
@@ -378,7 +387,7 @@ class ICController(base.BaseController):
             }
             return render('pipeline/create_pipeline.html', extra_vars = vars)
         except socket.timeout, e:
-            err_msg = _("Connecting to UnifiedViews timed out.")
+            err_msg = _(u"Connecting to UnifiedViews timed out.")
         
         self._load(id)
         vars = {'uv_url': open_on_load,
@@ -406,10 +415,10 @@ class ICController(base.BaseController):
             execution = uv_api.execute_now(pipeline_id, user_id=user_id, user_actor_id=actor_id)
             log.debug("started execution: {0}".format(execution))
         except Exception, e:
-            err_msg = _("Couldn't execute pipeline: {error}".format(error=e.msg))
+            err_msg = _(u"Couldn't execute pipeline: {error}").format(error=e.msg)
             log.exception(e)
         except socket.timeout, e:
-            err_msg = _("Connecting to UnifiedViews timed out.")
+            err_msg = _(u"Connecting to UnifiedViews timed out.")
         
         if err_msg:
             h.flash_error(err_msg)        

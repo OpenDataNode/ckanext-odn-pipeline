@@ -61,24 +61,24 @@ class UVRestAPIWrapper():
     
     # [urllib2 requests] processes HttpError and raises appropriate error msg
     def _process_error_and_raise_it(self, error):
-        err_msg = error.reason
+        err_msg = error.reason or u""
         if error.hdrs.get('content-type', '') == 'application/json':
             err_dict = json.loads(error.fp.read())
             err_msg = err_dict.get('errorMessage', err_dict)
             if err_dict.has_key('technicalMessage'):
                 log.error(err_dict.get('technicalMessage'))
-        error.msg = err_msg
+        error.msg = unicode(err_msg)
         raise error
     
     # [for requests module] the same error processing
     def _process_error_and_raise_it2(self, response):
-        error_msg = response.text
+        error_msg = response.text or u""
         if response.headers.get('content-type') == 'application/json':
             err_dict = response.json()
-            error_msg = err_dict.get('errorMessage')
+            error_msg = err_dict.get('errorMessage', u"")
             if err_dict.has_key('technicalMessage'):
                 log.error(err_dict.get('technicalMessage'))
-        raise HTTPError(response.url, response.status_code, error_msg, response.headers, None)
+        raise HTTPError(response.url, response.status_code, unicode(error_msg), response.headers, None)
 
 
     def _send_request_with_data(self, uv_url, data_string, is_put=False):
@@ -94,7 +94,8 @@ class UVRestAPIWrapper():
         else:
             response = requests.post(uv_url, data=data_string, headers=headers)
         if response.status_code != 200:
-            log.error("Error sending request to {0}: {1}".format(uv_url, response.text))
+            error = response.text or u""
+            log.error("Error sending request to {0}: {1}".format(uv_url, error.encode("utf-8")))
             self._process_error_and_raise_it2(response)
         response_dict = response.json()
         return response_dict
@@ -144,6 +145,8 @@ class UVRestAPIWrapper():
             return execution
         except urllib2.HTTPError, err:
             if err.code == 404:
+                err_msg = err.msg or ''
+                log.debug("Pipeline with id = {0} has no executions: {1}".format(pipe_id, err_msg.encode("utf-8")))
                 return None
             else:
                 raise err
