@@ -47,7 +47,7 @@ uv_api_url = get_url_without_slash_at_the_end(config.get('odn.uv.api.url', None)
 
 def disable_schedules_for_pipe(pipe_id):
     try:
-        uv_api = UVRestAPIWrapper(uv_api_url)
+        uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
         schedules = uv_api.get_all_schedules(pipe_id)
         for schedule in schedules:
             if not schedule.get('enabled', True):
