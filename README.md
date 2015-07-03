@@ -27,11 +27,10 @@ From the extension folder start the installation: ``` python setup.py install ``
 Add extension to ckan config: /etc/ckan/default/production.ini
 
 ```
-ckan.plugins = odn_pipeline odn_resource_update_api internal_api
+ckan.plugins = odn_pipeline internal_api
 ```
 
 * odn_pipeline - plugin for association pipeline to dataset from CKAN GUI 
-* odn_resource_update_api - plugin needed for L-Catalog DPU
 * internal_api - plugin to proxy API calls, needed by DPUs: L-FilesToCkan, L-RdfToCkan, L-RelationalToCkan, L-RelationalDiffToCkan
 
 to section [app:main] add:
@@ -47,9 +46,8 @@ odn.uv.api.auth.password = password
 # allow create pipelines from CKAN gui, default True (optional)
 odn.uv.pipeline.allow.create = False
 
-# resource update api (L-Catalog <-> IC), the URL are quoted in code
+# resource update api, the URL are quoted in code
 odn.storage.rdf.uri.template = http://host/sparql?query=select {?s ?p ?o} from {storage_id}
-odn.storage.file.uri.template = http://host/dump/{storage_id}
 
 # internal_api
 ckan.auth.internal_api.token = my secret token
@@ -185,6 +183,14 @@ Request:
 For 'package_update', 'package_show', 'resource_create' actions the pipeline_id is converted to appropriate package id. So for these
 actions its not necessary to add the ids to the data parameter and will be overwritten if both are given.
 
+Added special action:
+* resource_download - enabling to download file through CKAN API
+	* WARNING: this change requires change in ApiController (in CKAN core) to function
+	* required data parameters:
+		* package_id - dataset id, that the resource belongs to
+		* id - resource id
+	* response if success: file, header parameter content-type indicating mimetype
+	* response if failed: standard CKAN API response
 
 Internationalization (i18n)
 -------
