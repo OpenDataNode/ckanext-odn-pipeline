@@ -27,11 +27,10 @@ From the extension folder start the installation: ``` python setup.py install ``
 Add extension to ckan config: /etc/ckan/default/production.ini
 
 ```
-ckan.plugins = odn_pipeline odn_resource_update_api internal_api
+ckan.plugins = odn_pipeline internal_api
 ```
 
 * odn_pipeline - plugin for association pipeline to dataset from CKAN GUI 
-* odn_resource_update_api - plugin needed for L-Catalog DPU
 * internal_api - plugin to proxy API calls, needed by DPUs: L-FilesToCkan, L-RdfToCkan, L-RelationalToCkan, L-RelationalDiffToCkan
 
 to section [app:main] add:
@@ -47,9 +46,8 @@ odn.uv.api.auth.password = password
 # allow create pipelines from CKAN gui, default True (optional)
 odn.uv.pipeline.allow.create = False
 
-# resource update api (L-Catalog <-> IC), the URL are quoted in code
+# resource update api, the URL are quoted in code
 odn.storage.rdf.uri.template = http://host/sparql?query=select {?s ?p ?o} from {storage_id}
-odn.storage.file.uri.template = http://host/dump/{storage_id}
 
 # internal_api
 ckan.auth.internal_api.token = my secret token

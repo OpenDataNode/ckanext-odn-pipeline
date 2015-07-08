@@ -56,6 +56,7 @@ class UVRestAPIWrapper():
             self._process_error_and_raise_it(e)
         # Use the json module to load CKAN's response into a dictionary.
         response_dict = json.loads(response.read())
+        response.close()
         return response_dict
     
     
