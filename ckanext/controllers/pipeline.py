@@ -55,7 +55,8 @@ def disable_schedules_for_pipe(pipe_id):
             schedule['enabled'] = False
             uv_api.edit_pipe_schedule(pipe_id, schedule)
     except Exception, e:
-        log.error('Failed to disable schedules for pipeline id {0}: {1}'.format(pipe_id, e.msg))
+        err_msg = e.msg or ""
+        log.error('Failed to disable schedules for pipeline id {0}: {1}'.format(pipe_id, err_msg.encode("utf-8")))
     except socket.timeout, e:
         log.error('Timeout: Failed to disable schedules for pipeline id {0}: {1}'.format(pipe_id, e))
 

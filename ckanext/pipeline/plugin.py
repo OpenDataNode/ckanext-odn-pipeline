@@ -71,8 +71,13 @@ def get_all_pipelines():
         uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
         pipes = uv_api.get_pipelines(user_external_id)
         return pipes
+    except urllib2.HTTPError, e:
+        error_msg =_("Couldn't retrieve information about pipelines: {error}").format(error=e.msg)
+        h.flash_error(error_msg)
+        log.error(e)
+        return None
     except Exception, e:
-        h.flash_error(_("Couldn't get pipelines, probably UnifiedViews is not responding."))
+        h.flash_error(_("Couldn't retrieve information about pipelines."))
         log.exception(e)
         return None
     except socket.timeout, e:
@@ -87,7 +92,7 @@ def get_pipeline(pipe_id):
         pipe = uv_api.get_pipeline_by_id(pipe_id)
         return pipe, []
     except urllib2.HTTPError, e:
-        error_msg =_("Couldn't get pipeline: {error}").format(error=e.msg)
+        error_msg =_("Couldn't retrieve pipeline information: {error}").format(error=e.msg)
         return None, [error_msg]
     except socket.timeout, e:
         error_msg = _("Connecting to UnifiedViews timed out.")
