@@ -91,9 +91,9 @@ class UVRestAPIWrapper():
             headers[AUTH_HEADER_FIELD_NAME] = self.auth
 
         if is_put:
-            response = requests.put(uv_url, data=data_string, headers=headers)
+            response = requests.put(uv_url, data=data_string, headers=headers, verify=False)
         else:
-            response = requests.post(uv_url, data=data_string, headers=headers)
+            response = requests.post(uv_url, data=data_string, headers=headers, verify=False)
         if response.status_code != 200:
             error = response.text or u""
             log.error("Error sending request to {0}: {1}".format(uv_url, error.encode("utf-8")))
