@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ckanext-odn-pipeline 0.5.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-07-29 09:54+0200\n"
+"POT-Creation-Date: 2015-07-30 14:47+0200\n"
 "PO-Revision-Date: 2015-03-10 13:27+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: sk <LL@li.org>\n"
@@ -20,76 +20,76 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: ckanext/controllers/pipeline.py:89 ckanext/controllers/pipeline.py:224
-#: ckanext/controllers/pipeline.py:285 ckanext/controllers/pipeline.py:317
-#: ckanext/controllers/pipeline.py:377
+#: ckanext/controllers/pipeline.py:90 ckanext/controllers/pipeline.py:225
+#: ckanext/controllers/pipeline.py:286 ckanext/controllers/pipeline.py:318
+#: ckanext/controllers/pipeline.py:378
 msgid "User {user} not authorized to edit {id}"
 msgstr "Používateľ {user} nie je oprávnený upravovať {id}"
 
-#: ckanext/controllers/pipeline.py:95 ckanext/controllers/pipeline.py:222
-#: ckanext/controllers/pipeline.py:283 ckanext/controllers/pipeline.py:315
-#: ckanext/controllers/pipeline.py:375
+#: ckanext/controllers/pipeline.py:96 ckanext/controllers/pipeline.py:223
+#: ckanext/controllers/pipeline.py:284 ckanext/controllers/pipeline.py:316
+#: ckanext/controllers/pipeline.py:376
 msgid "Dataset not found"
 msgstr "Dataset nebol nájdený"
 
-#: ckanext/controllers/pipeline.py:97
+#: ckanext/controllers/pipeline.py:98
 msgid "Unauthorized to read package {id}"
 msgstr "Nie ste oprávnený čítať dataset {id}"
 
-#: ckanext/controllers/pipeline.py:133
+#: ckanext/controllers/pipeline.py:134
 #: ckanext/pipeline/templates/pipeline/choose_assign_action.html:37
 msgid "Next step"
 msgstr "Ďalší krok"
 
-#: ckanext/controllers/pipeline.py:137
+#: ckanext/controllers/pipeline.py:138
 msgid "Not implemented yet"
 msgstr "Zatiaľ nie je implementované"
 
-#: ckanext/controllers/pipeline.py:139
+#: ckanext/controllers/pipeline.py:140
 msgid "Action was not choosen!"
 msgstr "Nebola zvolená akcia!"
 
-#: ckanext/controllers/pipeline.py:155
+#: ckanext/controllers/pipeline.py:156
 msgid "Choose pipeline to copy."
 msgstr "Zvoľte proces, ktorý sa má kopírovať."
 
-#: ckanext/controllers/pipeline.py:180 ckanext/controllers/pipeline.py:334
+#: ckanext/controllers/pipeline.py:181 ckanext/controllers/pipeline.py:335
 msgid "Pipeline name is required."
 msgstr "Meno procesu je povinné."
 
-#: ckanext/controllers/pipeline.py:212 ckanext/controllers/pipeline.py:365
+#: ckanext/controllers/pipeline.py:213 ckanext/controllers/pipeline.py:366
 msgid "Pipeline wasn't created."
 msgstr "Proces nebol vytvorený."
 
-#: ckanext/controllers/pipeline.py:214 ckanext/controllers/pipeline.py:275
-#: ckanext/controllers/pipeline.py:367
+#: ckanext/controllers/pipeline.py:215 ckanext/controllers/pipeline.py:276
+#: ckanext/controllers/pipeline.py:368
 msgid "Pipeline is already associated to some dataset."
 msgstr "Proces už je priradený k inému datasetu."
 
-#: ckanext/controllers/pipeline.py:219 ckanext/controllers/pipeline.py:372
+#: ckanext/controllers/pipeline.py:220 ckanext/controllers/pipeline.py:373
 msgid "Pipeline {name} assigned successfully."
 msgstr "Proces {name} úspešne priradený."
 
-#: ckanext/controllers/pipeline.py:227 ckanext/controllers/pipeline.py:380
+#: ckanext/controllers/pipeline.py:228 ckanext/controllers/pipeline.py:381
 msgid "Couldn't create/associate pipeline: {error}"
 msgstr "Nepodarilo sa vytvoriť/priradiť proces: {error}"
 
-#: ckanext/controllers/pipeline.py:238 ckanext/controllers/pipeline.py:390
-#: ckanext/controllers/pipeline.py:421 ckanext/pipeline/plugin.py:84
+#: ckanext/controllers/pipeline.py:239 ckanext/controllers/pipeline.py:391
+#: ckanext/controllers/pipeline.py:422 ckanext/pipeline/plugin.py:84
 #: ckanext/pipeline/plugin.py:98 ckanext/pipeline/plugin.py:197
 #: ckanext/pipeline/plugin.py:221
 msgid "Connecting to UnifiedViews timed out."
 msgstr "Vypršal čas pre pripojenie sa k Transformačnému modulu."
 
-#: ckanext/controllers/pipeline.py:265
+#: ckanext/controllers/pipeline.py:266
 msgid "No pipeline selected."
 msgstr "Nebol vybraný žiadny proces."
 
-#: ckanext/controllers/pipeline.py:281
+#: ckanext/controllers/pipeline.py:282
 msgid "Pipeline assigned successfully."
 msgstr "Proces bol priradený úspešne."
 
-#: ckanext/controllers/pipeline.py:305
+#: ckanext/controllers/pipeline.py:306
 msgid ""
 "Couldn't remove pipeline, because there is no such pipeline assigned to "
 "this dataset."
@@ -97,11 +97,11 @@ msgstr ""
 "Nepodarilo sa odstrániť proces, žiadny taký proces nie je priradený "
 "datasetu."
 
-#: ckanext/controllers/pipeline.py:311
+#: ckanext/controllers/pipeline.py:312
 msgid "Pipeline removed from dataset successfully"
 msgstr "Proces bol úspešne odstránený z datasetu"
 
-#: ckanext/controllers/pipeline.py:418
+#: ckanext/controllers/pipeline.py:419
 msgid "Couldn't execute pipeline: {error}"
 msgstr "Nepodarilo sa spustiť proces: {error}"
 
@@ -178,7 +178,7 @@ msgstr "Ďalšie spustenie: "
 msgid "Not planned"
 msgstr "Nie je plánované"
 
-#: ckanext/pipeline/templates/package/pipelines.html:82
+#: ckanext/pipeline/templates/package/pipelines.html:86
 msgid "No pipelines assigned."
 msgstr "Nebol priradený žiadny proces."
 
@@ -271,4 +271,8 @@ msgstr "Meno procesu"
 #: ckanext/pipeline/templates/pipeline/create_pipeline.html:23
 msgid "Description"
 msgstr "Popis"
+
+#: ckanext/pipeline/templates/pipeline/create_pipeline.html:23
+msgid "Pipeline description"
+msgstr "Popis procesu"
 
