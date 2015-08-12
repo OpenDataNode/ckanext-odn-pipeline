@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '0.6.2-SNAPSHOT'
+version = '1.1.2-SNAPSHOT'
 
 setup(
     name='ckanext-odn-pipeline',
