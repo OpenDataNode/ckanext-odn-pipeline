@@ -266,7 +266,7 @@ msgstr "Meno"
 
 #: ckanext/pipeline/templates/pipeline/create_pipeline.html:22
 msgid "Pipeline name"
-msgstr "Meno procesu"
+msgstr "Názov procesu"
 
 #: ckanext/pipeline/templates/pipeline/create_pipeline.html:23
 msgid "Description"
