@@ -48,7 +48,11 @@
 			    </ul>
 			  </div>
 			  {% if pipe['error'] %}
-			  <div class="error">Error: {{ pipe['error'] }}</div>
+			    <div class="error">
+			      {% for error_msg in pipe['error'] %}
+			  		<p>{{ error_msg }}</p>
+			      {% endfor %}
+				</div>
 			  {% endif %}
 		      <div><p>{{ pipe['description'] }}</p></div>
 		      <div>

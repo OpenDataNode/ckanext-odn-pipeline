@@ -14,10 +14,13 @@
   {% else %}
     {% snippet 'pipeline/snippets/stages.html', stages=['complete', 'complete', 'active'], labels=[_('Choose action'), None, _('Create pipeline')] %}
   {% endif %}
+  {% if err_msg %}
+  <div class="error">{{ err_msg }}</div>
+  {% endif %}
   <form method='post' class="module-content form-horizontal" action="{% url_for controller=controller, action=form_action, id=c.pkg_dict.name %}">
   	<input id="pipeline" name="pipeline" type="hidden" value="{{ pipeline }}"/>
-  	{{ form.input('name', label=_('Name'), placeholder=_('Pipeline name'), value='', error=error, classes=[], is_required=true) }}
-  	{{ form.textarea('description', id='description', value=descr, label=_('Description'), placeholder='Pipeline description', error=error) }}
+  	{{ form.input('name', label=_('Name'), placeholder=_('Pipeline name'), value=name or '', classes=[], is_required=true) }}
+  	{{ form.textarea('description', id='description', value=descr or '', label=_('Description'), placeholder=_('Pipeline description')) }}
     <div class="form-actions">
       {% link_for _('Back'), controller=controller, action='choose_action', id=c.pkg_dict.name, class_='btn' %}
       <input type="submit" class="btn btn-primary" value="{{ _('Finish') }}" />

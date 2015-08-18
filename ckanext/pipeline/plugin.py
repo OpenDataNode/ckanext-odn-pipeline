@@ -71,8 +71,13 @@ def get_all_pipelines():
         uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
         pipes = uv_api.get_pipelines(user_external_id)
         return pipes
+    except urllib2.HTTPError, e:
+        error_msg =_("Couldn't retrieve information about pipelines: {error}").format(error=e.msg)
+        h.flash_error(error_msg)
+        log.error(e)
+        return None
     except Exception, e:
-        h.flash_error(_("Couldn't get pipelines, probably UnifiedViews is not responding."))
+        h.flash_error(_("Couldn't retrieve information about pipelines."))
         log.exception(e)
         return None
     except socket.timeout, e:
@@ -85,13 +90,13 @@ def get_pipeline(pipe_id):
     try:
         uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
         pipe = uv_api.get_pipeline_by_id(pipe_id)
-        return pipe, None
+        return pipe, []
     except urllib2.HTTPError, e:
-        error_msg =_("Couldn't get pipeline with id = {pipe_id}: {error}").format(pipe_id=pipe_id, error=e)
-        return None, error_msg
+        error_msg =_("Couldn't retrieve pipeline information: {error}").format(error=e.msg)
+        return None, [error_msg]
     except socket.timeout, e:
         error_msg = _("Connecting to UnifiedViews timed out.")
-        return None, error_msg
+        return None, [error_msg]
  
 def get_pipelines_not_assigned():
     pipes = get_all_pipelines()
@@ -141,8 +146,15 @@ def get_dataset_pipelines(package_id):
                 synchonize_name(pipe, pipes)
                 
             if pipe:
-                add_last_exec_info(pipes.pipeline_id, pipe)                    
-                add_next_exec_info(pipes.pipeline_id, pipe)
+                err_last = add_last_exec_info(pipes.pipeline_id, pipe)
+                err_next = add_next_exec_info(pipes.pipeline_id, pipe)
+                
+                if err_last:
+                    err_msg.append(err_last)
+                if err_next:
+                    err_msg.append(err_next)
+                
+                pipe['error'] = err_msg
             
             if pipe:
                 val.append(pipe)
@@ -179,13 +191,12 @@ def add_last_exec_info(pipe_id, pipe):
         pipe['last_exec_link'] = '{0}/#!ExecutionList/exec={1}'\
             .format(uv_url, last_exec['id'])
     except urllib2.HTTPError, e:
-        error_msg =_("Couldn't get pipeline last execution information for pipeline id = {pipe_id}: {error}")\
-                    .format(pipe_id=pipe_id, error=e)
+        error_msg =_("Couldn't get pipeline last execution information: {error}")\
+                    .format(error=e.msg)
     except socket.timeout, e:
         error_msg = _("Connecting to UnifiedViews timed out.")
     
-    if error_msg:
-        h.flash_error(error_msg)
+    return error_msg
 
 
 def add_next_exec_info(pipe_id, pipe):
@@ -204,13 +215,12 @@ def add_next_exec_info(pipe_id, pipe):
         pipe['next_exec_sched_url'] = '{0}/#!Scheduler'.format(uv_url) # TODO link to schedule
         return
     except urllib2.HTTPError, e:
-        error_msg =_("Couldn't get pipeline next execution information for pipeline id = {pipe_id}: {error}")\
-                    .format(pipe_id=pipe_id, error=e)
+        error_msg =_("Couldn't get pipeline next execution information: {error}")\
+                    .format(error=e.msg)
     except socket.timeout, e:
         error_msg = _("Connecting to UnifiedViews timed out.")
 
-    if error_msg:
-        h.flash_error(error_msg)
+    return error_msg
 
 
 def get_available_pipes_options():
