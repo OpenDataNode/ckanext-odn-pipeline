@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ckanext-odn-pipeline 0.5.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-07-30 14:47+0200\n"
+"POT-Creation-Date: 2015-08-19 12:43+0200\n"
 "PO-Revision-Date: 2015-03-10 13:27+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: sk <LL@li.org>\n"
@@ -163,8 +163,8 @@ msgid "Execute now"
 msgstr "Spustiť teraz"
 
 #: ckanext/pipeline/templates/package/pipelines.html:46
-msgid "Remove"
-msgstr "Odstrániť"
+msgid "Disassociate"
+msgstr "Zrušiť asociáciu"
 
 #: ckanext/pipeline/templates/package/pipelines.html:60
 msgid "Last execution: {time}, last run status: "
