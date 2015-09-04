@@ -278,7 +278,8 @@ class PipelinePlugin(plugins.SingletonPlugin):
     # Tell CKAN what custom template helper functions this plugin provides,
     # see the ITemplateHelpers plugin interface.
     def get_helpers(self):
-        return {'allows_create_pipe': allows_create_pipe}
+        return {'get_dataset_pipelines':get_dataset_pipelines,
+                'allows_create_pipe': allows_create_pipe}
     
     
     def before_map(self, route_map):
