@@ -2,10 +2,11 @@
 Changelog
 ---------
 
-v1.2.0-SNAPSHOT 2015-8-19
+v1.2.0-SNAPSHOT 2015-9-9
 
 Bug fixes:
  * i18n updates
+ * can associate my organization pipelines; can create copy all public and my organization pipelines [OpenDataNode/open-data-node#196]
 
 v1.1.2 2015-8-18
 
