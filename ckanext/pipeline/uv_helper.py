@@ -170,7 +170,7 @@ class UVRestAPIWrapper():
         executions = self._send_request(uv_url)
         if executions and len(executions) > 0:
             execution = executions.pop(0)
-            return execution['schedule'], execution['lastChange'], execution['status']
+            return execution['id'], execution['lastChange'], execution['status']
         
         # if there is no pending execution, get next execution from schedules
         uv_url = "{0}/pipelines/{1}/schedules/~all/scheduledexecutions".format(self.url, pipe_id)
