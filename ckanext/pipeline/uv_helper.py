@@ -109,6 +109,13 @@ class UVRestAPIWrapper():
         return self._send_request(uv_url)
     
     
+    def get_visible_pipelines(self, user_id=None):
+        uv_url = '{0}/pipelines/visible'.format(self.url)
+        if user_id:
+            uv_url = '{0}?{1}={2}'.format(uv_url, USER_EXT_ID, user_id)
+        return self._send_request(uv_url)
+    
+    
     def get_pipeline_by_id(self, pipe_id):
         assert pipe_id
         uv_url = '{0}/pipelines/{1}'.format(self.url, pipe_id)
@@ -163,7 +170,7 @@ class UVRestAPIWrapper():
         executions = self._send_request(uv_url)
         if executions and len(executions) > 0:
             execution = executions.pop(0)
-            return execution['schedule'], execution['lastChange'], execution['status'], None
+            return execution['id'], execution['lastChange'], execution['status'], None
         
         # if there is no pending execution, get next execution from schedules
         uv_url = "{0}/pipelines/{1}/schedules/~all/scheduledexecutions".format(self.url, pipe_id)
