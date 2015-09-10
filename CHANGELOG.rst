@@ -4,6 +4,9 @@ Changelog
 
 v1.2.0-SNAPSHOT 2015-9-10
 
+Features:
+ * if pipeline has no "normal" schedule rule and is planned after another pipeline(s), this information is properly displayed
+
 Bug fixes:
  * i18n updates
  * can associate my organization pipelines; can create copy all public and my organization pipelines [OpenDataNode/open-data-node#196]
