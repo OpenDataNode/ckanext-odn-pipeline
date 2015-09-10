@@ -211,7 +211,7 @@ def add_next_exec_info(pipe_id, pipe):
     error_msg = None
     try:
         uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
-        exec_or_schedule_id, next_exec, next_exec_status = uv_api.get_next_execution_info(pipe_id)
+        exec_or_schedule_id, next_exec, next_exec_status, after_pipelines = uv_api.get_next_execution_info(pipe_id)
         
         pipe['next_exec'] = format_date(next_exec)
         pipe['next_exec_status'] = STATUSES[next_exec_status]
@@ -220,6 +220,10 @@ def add_next_exec_info(pipe_id, pipe):
             pipe['next_exec_sched_url'] = '{0}/#!ExecutionList/exec={1}'.format(uv_url, exec_or_schedule_id)
         else: # is only scheduled
             pipe['next_exec_sched_url'] = '{0}/#!Scheduler'.format(uv_url) # TODO link to schedule
+        
+        if after_pipelines:
+            pipe['next_exec'] = _(u"After pipeline(s) with name: '{0}'").format(u"', '".join(after_pipelines))
+            
         return
     except urllib2.HTTPError, e:
         error_msg =_("Couldn't get pipeline next execution information: {error}")\
