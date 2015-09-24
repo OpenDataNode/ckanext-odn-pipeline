@@ -56,7 +56,7 @@ def allows_create_pipe():
     return pipeline_allow_create
 
 # Our custom template helper function.
-def get_all_pipelines():
+def get_all_pipelines(only_visible=False):
     assert uv_api_url
     try:
         if c.userobj:
@@ -69,7 +69,10 @@ def get_all_pipelines():
             return []            
         
         uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
-        pipes = uv_api.get_pipelines(user_external_id)
+        if only_visible:
+            pipes = uv_api.get_visible_pipelines(user_external_id)
+        else:
+            pipes = uv_api.get_pipelines(user_external_id)
         return pipes
     except urllib2.HTTPError, e:
         error_msg =_("Couldn't retrieve information about pipelines: {error}").format(error=e.msg)
@@ -208,11 +211,19 @@ def add_next_exec_info(pipe_id, pipe):
     error_msg = None
     try:
         uv_api = UVRestAPIWrapper(uv_api_url, uv_api_auth)
-        schedule_id, next_exec, next_exec_status = uv_api.get_next_execution_info(pipe_id)
+        exec_or_schedule_id, next_exec, next_exec_status, after_pipelines = uv_api.get_next_execution_info(pipe_id)
         
         pipe['next_exec'] = format_date(next_exec)
         pipe['next_exec_status'] = STATUSES[next_exec_status]
-        pipe['next_exec_sched_url'] = '{0}/#!Scheduler'.format(uv_url) # TODO link to schedule
+        
+        if next_exec_status and exec_or_schedule_id: # execution is queued or running
+            pipe['next_exec_sched_url'] = '{0}/#!ExecutionList/exec={1}'.format(uv_url, exec_or_schedule_id)
+        else: # is only scheduled
+            pipe['next_exec_sched_url'] = '{0}/#!Scheduler'.format(uv_url) # TODO link to schedule
+        
+        if after_pipelines:
+            pipe['next_exec'] = _(u"After pipeline(s) with name: '{0}'").format(u"', '".join(after_pipelines))
+            
         return
     except urllib2.HTTPError, e:
         error_msg =_("Couldn't get pipeline next execution information: {error}")\
@@ -229,7 +240,7 @@ def get_available_pipes_options():
 
 
 def get_all_pipes_options():
-    pipes = get_all_pipelines()
+    pipes = get_all_pipelines(True)
     return get_options_discriptions_for(pipes)
 
     
@@ -275,10 +286,8 @@ class PipelinePlugin(plugins.SingletonPlugin):
     # Tell CKAN what custom template helper functions this plugin provides,
     # see the ITemplateHelpers plugin interface.
     def get_helpers(self):
-        return {'get_pipeline_available': get_pipelines_not_assigned,
-                'get_dataset_pipelines': get_dataset_pipelines,
-                'allows_create_pipe': allows_create_pipe
-                }
+        return {'get_dataset_pipelines':get_dataset_pipelines,
+                'allows_create_pipe': allows_create_pipe}
     
     
     def before_map(self, route_map):

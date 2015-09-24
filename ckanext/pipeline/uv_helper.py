@@ -109,6 +109,13 @@ class UVRestAPIWrapper():
         return self._send_request(uv_url)
     
     
+    def get_visible_pipelines(self, user_id=None):
+        uv_url = '{0}/pipelines/visible'.format(self.url)
+        if user_id:
+            uv_url = '{0}?{1}={2}'.format(uv_url, USER_EXT_ID, user_id)
+        return self._send_request(uv_url)
+    
+    
     def get_pipeline_by_id(self, pipe_id):
         assert pipe_id
         uv_url = '{0}/pipelines/{1}'.format(self.url, pipe_id)
@@ -163,17 +170,24 @@ class UVRestAPIWrapper():
         executions = self._send_request(uv_url)
         if executions and len(executions) > 0:
             execution = executions.pop(0)
-            return execution['schedule'], execution['lastChange'], execution['status']
+            return execution['id'], execution['lastChange'], execution['status'], None
         
         # if there is no pending execution, get next execution from schedules
         uv_url = "{0}/pipelines/{1}/schedules/~all/scheduledexecutions".format(self.url, pipe_id)
         schedules = self._send_request(uv_url)
-        if schedules and len(schedules) > 0:
-            schedule = schedules.pop(0)
-            return schedule['schedule'], schedule['start'], None
+        if schedules:
+            if not schedules[0]['afterPipelines']:
+                schedule = schedules.pop(0) # its already sorted by start time
+                return schedule['schedule'], schedule['start'], None, None
+            else:
+                after_pipes = []
+                for schedule in schedules:
+                    after_pipes += schedule['afterPipelines'].values()
+                return None, None, None, after_pipes
+                    
         
-        return None, None, None 
-    
+        return None, None, None, None
+        
 
     def execute_now(self, pipe_id, is_debugging=False, user_id=None, user_actor_id=None):
         assert pipe_id
