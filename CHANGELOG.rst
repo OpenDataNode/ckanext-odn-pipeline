@@ -1,8 +1,12 @@
 ---------
 Changelog
 ---------
+v1.2.1 2015-9-10
 
-v1.2.0-SNAPSHOT 2015-9-10
+Bug fixes:
+ * i18n updates
+
+v1.2.0 2015-9-10
 
 Features:
  * if pipeline has no "normal" schedule rule and is planned after another pipeline(s), this information is properly displayed
