@@ -1,7 +1,7 @@
 ---------
 Changelog
 ---------
-v1.2.1 2015-9-10
+v1.2.1 2015-10-7
 
 Bug fixes:
  * i18n updates
