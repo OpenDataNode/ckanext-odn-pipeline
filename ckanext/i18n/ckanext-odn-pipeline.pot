@@ -1,0 +1,278 @@
+# Translations template for ckanext-odn-pipeline.
+# Copyright (C) 2015 ORGANIZATION
+# This file is distributed under the same license as the ckanext-odn-pipeline
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ckanext-odn-pipeline 1.2.1\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2015-10-30 13:00+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: ckanext/controllers/pipeline.py:90 ckanext/controllers/pipeline.py:225
+#: ckanext/controllers/pipeline.py:286 ckanext/controllers/pipeline.py:318
+#: ckanext/controllers/pipeline.py:378
+msgid "User {user} not authorized to edit {id}"
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:96 ckanext/controllers/pipeline.py:223
+#: ckanext/controllers/pipeline.py:284 ckanext/controllers/pipeline.py:316
+#: ckanext/controllers/pipeline.py:376
+msgid "Dataset not found"
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:98
+msgid "Unauthorized to read package {id}"
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:134
+#: ckanext/pipeline/templates/pipeline/choose_assign_action.html:37
+msgid "Next step"
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:138
+msgid "Not implemented yet"
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:140
+msgid "Action was not choosen!"
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:156
+msgid "Choose pipeline to copy."
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:181 ckanext/controllers/pipeline.py:335
+msgid "Pipeline name is required."
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:213 ckanext/controllers/pipeline.py:366
+msgid "Pipeline wasn't created."
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:215 ckanext/controllers/pipeline.py:276
+#: ckanext/controllers/pipeline.py:368
+msgid "Pipeline is already associated to some dataset."
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:220 ckanext/controllers/pipeline.py:373
+msgid "Pipeline {name} assigned successfully."
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:228 ckanext/controllers/pipeline.py:381
+msgid "Couldn't create/associate pipeline: {error}"
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:239 ckanext/controllers/pipeline.py:391
+#: ckanext/controllers/pipeline.py:422 ckanext/pipeline/plugin.py:87
+#: ckanext/pipeline/plugin.py:101 ckanext/pipeline/plugin.py:200
+#: ckanext/pipeline/plugin.py:232
+msgid "Connecting to UnifiedViews timed out."
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:266
+msgid "No pipeline selected."
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:282
+msgid "Pipeline assigned successfully."
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:306
+msgid ""
+"Couldn't remove pipeline, because there is no such pipeline assigned to this "
+"dataset."
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:312
+msgid "Pipeline removed from dataset successfully"
+msgstr ""
+
+#: ckanext/controllers/pipeline.py:419
+msgid "Couldn't execute pipeline: {error}"
+msgstr ""
+
+#: ckanext/internal_api/plugin.py:66
+msgid "internal api: Authentication failed."
+msgstr ""
+
+#: ckanext/pipeline/plugin.py:66
+msgid "Error: Only logged in user can associate pipelines."
+msgstr ""
+
+#: ckanext/pipeline/plugin.py:78
+msgid "Couldn't retrieve information about pipelines: {error}"
+msgstr ""
+
+#: ckanext/pipeline/plugin.py:83
+msgid "Couldn't retrieve information about pipelines."
+msgstr ""
+
+#: ckanext/pipeline/plugin.py:98
+msgid "Couldn't retrieve pipeline information: {error}"
+msgstr ""
+
+#: ckanext/pipeline/plugin.py:167
+msgid "Couldn't connect to UnifiedViews server."
+msgstr ""
+
+#: ckanext/pipeline/plugin.py:197
+msgid "Couldn't get pipeline last execution information: {error}"
+msgstr ""
+
+#: ckanext/pipeline/plugin.py:225
+msgid "After pipeline(s) with name: '{0}'"
+msgstr ""
+
+#: ckanext/pipeline/plugin.py:229
+msgid "Couldn't get pipeline next execution information: {error}"
+msgstr ""
+
+#: ckanext/pipeline/templates/package/edit_base.html:5
+#: ckanext/pipeline/templates/package/pipelines.html:3
+msgid "Pipelines"
+msgstr ""
+
+#: ckanext/pipeline/templates/package/pipelines.html:13
+msgid "Add pipeline"
+msgstr ""
+
+#: ckanext/pipeline/templates/package/pipelines.html:29
+msgid "Action"
+msgstr ""
+
+#: ckanext/pipeline/templates/package/pipelines.html:36
+msgid "Configure manually"
+msgstr ""
+
+#: ckanext/pipeline/templates/package/pipelines.html:40
+msgid "Schedule"
+msgstr ""
+
+#: ckanext/pipeline/templates/package/pipelines.html:43
+msgid "Execute now"
+msgstr ""
+
+#: ckanext/pipeline/templates/package/pipelines.html:46
+msgid "Disassociate"
+msgstr ""
+
+#: ckanext/pipeline/templates/package/pipelines.html:60
+msgid "Last execution: {time}, last run status: "
+msgstr ""
+
+#: ckanext/pipeline/templates/package/pipelines.html:68
+msgid "Next execution: "
+msgstr ""
+
+#: ckanext/pipeline/templates/package/pipelines.html:77
+msgid "Not planned"
+msgstr ""
+
+#: ckanext/pipeline/templates/package/pipelines.html:86
+msgid "No pipelines assigned."
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/assign_pipeline.html:5
+msgid "Choose existing pipeline"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/choose_assign_action.html:3
+#: ckanext/pipeline/templates/pipeline/choose_assign_action.html:19
+#: ckanext/pipeline/templates/pipeline/choose_pipeline.html:13
+#: ckanext/pipeline/templates/pipeline/create_pipeline.html:13
+#: ckanext/pipeline/templates/pipeline/create_pipeline.html:15
+#: ckanext/pipeline/templates/pipeline/create_pipeline_response.html:13
+msgid "Choose action"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/choose_assign_action.html:23
+msgid "Existing pipeline"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/choose_assign_action.html:28
+msgid "Create new manually"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/choose_assign_action.html:32
+msgid "Create a modified copy of existing pipeline"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/choose_assign_action.html:36
+#: ckanext/pipeline/templates/pipeline/choose_pipeline.html:35
+#: ckanext/pipeline/templates/pipeline/create_pipeline.html:25
+#: ckanext/pipeline/templates/pipeline/create_pipeline_response.html:17
+#: ckanext/pipeline/templates/pipeline/create_pipeline_response.html:23
+msgid "Back"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/choose_assign_action.html:48
+msgid "Advice"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/choose_assign_action.html:51
+msgid " Add association to existing or newly created pipeline. "
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/choose_pipeline.html:5
+msgid "Choose pipeline to copy"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/choose_pipeline.html:13
+msgid "Choose pipeline"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/choose_pipeline.html:15
+msgid "Select pipeline"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/choose_pipeline.html:22
+msgid "Selected pipeline description"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/choose_pipeline.html:30
+msgid "N/A"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/choose_pipeline.html:36
+#: ckanext/pipeline/templates/pipeline/create_pipeline.html:26
+#: ckanext/pipeline/templates/pipeline/create_pipeline_response.html:13
+#: ckanext/pipeline/templates/pipeline/create_pipeline_response.html:24
+msgid "Finish"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/create_pipeline.html:5
+#: ckanext/pipeline/templates/pipeline/create_pipeline_response.html:5
+msgid "Creating new pipeline"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/create_pipeline.html:13
+#: ckanext/pipeline/templates/pipeline/create_pipeline.html:15
+msgid "Create pipeline"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/create_pipeline.html:22
+msgid "Name"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/create_pipeline.html:22
+msgid "Pipeline name"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/create_pipeline.html:23
+msgid "Description"
+msgstr ""
+
+#: ckanext/pipeline/templates/pipeline/create_pipeline.html:23
+msgid "Pipeline description"
+msgstr ""
+
