@@ -1,19 +1,17 @@
-# ckanext-odn-pipeline.
+# Translations template for ckanext-odn-pipeline.
 # Copyright (C) 2015 ORGANIZATION
-# This file is distributed under the same license as the
-# ckanext-odn-pipeline
+# This file is distributed under the same license as the ckanext-odn-pipeline
 # project.
 # 
 # Translators:
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2015
-# Oskar Stoffan <oskar.stoffan@gmail.com>, 2015
+# Sveto Krchnavy, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ckanext-odn-pipeline\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-09-10 10:51+0200\n"
-"PO-Revision-Date: 2015-10-07 10:40+0000\n"
-"Last-Translator: Oskar Stoffan <oskar.stoffan@gmail.com>\n"
+"POT-Creation-Date: 2015-10-30 13:00+0100\n"
+"PO-Revision-Date: 2015-10-30 13:40+0000\n"
+"Last-Translator: Sveto Krchnavy\n"
 "Language-Team: Slovak (http://www.transifex.com/opendatanode/ckanext-odn-pipeline/language/sk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
