@@ -1,0 +1,9 @@
+[main]
+host = https://www.transifex.com
+
+[ckanext-odn-pipeline.ckanext-odn-pipeline-pot]
+file_filter = ckanext/i18n/<lang>/LC_MESSAGES/ckanext_odn_pipeline.po
+source_file = ckanext/i18n/ckanext-odn-pipeline.pot
+source_lang = en
+type = PO
+
