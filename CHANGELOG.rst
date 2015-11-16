@@ -1,6 +1,13 @@
 ---------
 Changelog
 ---------
+
+---------
+v1.2.2-SNAPSHOT 2015-11-??
+
+New features:
+* translations using transifex
+
 v1.2.1 2015-10-7
 
 Bug fixes:
