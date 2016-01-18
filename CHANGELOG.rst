@@ -3,7 +3,7 @@ Changelog
 ---------
 
 ---------
-v1.2.2-SNAPSHOT 2015-11-??
+v1.2.2 2016-1-18
 
 New features:
 * translations using transifex
